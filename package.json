@@ -5,12 +5,13 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
+    "file-loader": "^6.0.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile":"npx webpack --webpack.config.js"
+    "compile": "npx webpack --webpack.config.js"
   },
   "repository": {
     "type": "git",

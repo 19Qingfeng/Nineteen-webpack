@@ -90,10 +90,23 @@
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("const main = \"入口文件\"\nconsole.log(main, 'main')\n\n//# sourceURL=webpack:///./src/main.js?");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _test_img_jpeg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./test-img.jpeg */ \"./src/test-img.jpeg\");\n\n\nconst img = new Image();\nimg.src = _test_img_jpeg__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\nlet root = document.getElementById('root')\nroot.appendChild(img)\n\n//# sourceURL=webpack:///./src/main.js?");
+
+/***/ }),
+
+/***/ "./src/test-img.jpeg":
+/*!***************************!*\
+  !*** ./src/test-img.jpeg ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ __webpack_exports__[\"default\"] = (__webpack_require__.p + \"22a7d692c9aef4294afc6ec9c8a08649.jpeg\");\n\n//# sourceURL=webpack:///./src/test-img.jpeg?");
 
 /***/ })
 
