@@ -1,0 +1,28 @@
+{
+  "name": "19-webpack",
+  "version": "1.0.0",
+  "description": "复习webapck",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile":"npx webpack --webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/19Qingfeng/19-webpack.git"
+  },
+  "keywords": [
+    "situation123."
+  ],
+  "author": "wang.haoyu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/19Qingfeng/19-webpack/issues"
+  },
+  "homepage": "https://github.com/19Qingfeng/19-webpack#readme"
+}
