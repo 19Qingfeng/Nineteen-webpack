@@ -22,10 +22,38 @@ module.exports = {
                 }
             },
             {
-                test: /\.scss$/,
+                test: /(\.modules\.suss)$/,
+                // css文件通常需要两个loader进行c处理
+                use: ["style-loader",
+                    {
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 2,
+                            modules: true
+                        }
+                    },
+                    "sass-loader", "postcss-loader"
+                ]
+            },
+            {
+                test: /\.(scss|css)$/,
                 // css文件通常需要两个loader进行处理
-                use: ["style-loader", "css-loader","sass-loader","postcss-loader"]
-            }
+                use: ["style-loader",
+                    {
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 2,
+                        }
+                    },
+                    "sass-loader", "postcss-loader"
+                ]
+            },
+            {
+                // test: /\.(eot|ttf|svg|woff2?)$/,
+                test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
+                use: ["file-loader"]
+            },
+
         ]
     },
     output: {

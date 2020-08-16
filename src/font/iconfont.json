@@ -1,0 +1,44 @@
+{
+  "id": "1977753",
+  "name": "React简书",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "11474220",
+      "name": "bussiness-man",
+      "font_class": "bussiness-man",
+      "unicode": "e6ef",
+      "unicode_decimal": 59119
+    },
+    {
+      "icon_id": "481508",
+      "name": "刷新 终结版",
+      "font_class": "shuaxinzhongjieban",
+      "unicode": "e670",
+      "unicode_decimal": 58992
+    },
+    {
+      "icon_id": "1314698",
+      "name": "放大镜",
+      "font_class": "fangdajing",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "1621077",
+      "name": "Aa",
+      "font_class": "Aa",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "14930333",
+      "name": "Pens羽毛笔",
+      "font_class": "Pensyumaobi",
+      "unicode": "e708",
+      "unicode_decimal": 59144
+    }
+  ]
+}
