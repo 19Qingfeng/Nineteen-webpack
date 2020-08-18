@@ -1,4 +1,8 @@
 const path = require('path')
+const htmlWebpackPlugin = require('html-webpack-plugin')
+const {
+    CleanWebpackPlugin
+} = require('clean-webpack-plugin')
 
 module.exports = {
     mode: "production",
@@ -56,8 +60,17 @@ module.exports = {
 
         ]
     },
+    // 配置plugin
+    plugins: [
+        new htmlWebpackPlugin({
+            template: path.resolve(__dirname, "./public/index.html"),
+            title: "19-webpack",
+            filename: "wanghaoyu.html"
+        }),
+        new CleanWebpackPlugin(),
+    ],
     output: {
-        filename: "bundle.js",
+        filename: "index.js",
         // 相对于当前(webpack.config.js)的dist文件夹下
         path: path.resolve(__dirname, "dist/")
     }

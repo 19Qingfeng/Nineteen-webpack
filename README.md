@@ -105,3 +105,39 @@ import style from "src/index.scss"
 #### 使用loader处理字体文件
 + file-loader帮助webapck识别ttf,eot,woff等格式的字体文件处理。
 + file-loader配置和url-loader类似，其实fileloader也可以处理图片文件，只不过url-loader存在limit配置可以转成base64.
+
+### Plugin
+
+> Plugin本质上就是在webpack运行到某个时刻的时候，帮我们做一些事情，类似生命周期函数。
+
+#### [HTML-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
+> HTML-webpack-plugin会在打包结束后，自动生成一个html文件，并把打包生成的js文件插入到html文件中。
++ 常用配置信息
+    1. title:用于生成Html的标题。（配合ejs或各框架使用- <%= htmlWebpackPlugin.options.title %>）
+    2. filename:生成的名称，默认index.html。 
+    3. template:指定路径，用于生成html文件时的模板文件。
+    4. inject :true | ‘head’ | ‘body’ | false 。把所有产出文件注入到给定的 template 或templateContent。当传入 true或者 ‘body’时所有javascript资源将被放置在body元素的底部，“head”则会放在head元素内。
+    5. favicon : 给定的图标路径，可将其添加到输出html中。
+    ...
+```
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+module.exports = {
+  entry: 'index.js',
+  output: {
+    path: __dirname + '/dist',
+    filename: 'index_bundle.js'
+  },
+  plugins: [
+    new HtmlWebpackPlugin()
+  ]
+}
+```
+
+#### [Clean-webpack-plugin](https://www.npmjs.com/package/clean-webpack-plugin)
+> 并非官方推荐，
+> 打包运行前进行之前打包文件的删除。默认可以不传递任何参数。
++ 常用配置
+    1. dry:默认false，删除mock文件。
+    2. verbose:打印信息。
+    ...
+> 之前配置更新了。。用到的还是查文档吧。。更新太快了。
