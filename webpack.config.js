@@ -9,6 +9,7 @@ module.exports = {
     entry: {
         main: path.resolve(__dirname, "./src/main.js")
     },
+    devtool: "inline-source-map",
     // 配置loader
     module: {
         rules: [{

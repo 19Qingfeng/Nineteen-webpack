@@ -173,3 +173,31 @@ output: {
     publicPath:"http://cdn.com.cn"
 }
 ```
+
+### SourceMap
+> srouceMap作用：它是一个映射关系，如果代码有报错，通过sourceMap可以将打包后代码出错的地方映射到源码中出错的地方。
+
+> 经过映射的转化我们也就可以快速精准的定位问题。
+
+#### devtool (sourceMap配置属性)
+
+###### [devtool配置属性和对应构建速度](url)
+
+> Tips:
+
+> 配置sourceMap后打包后的代码会对应出现map.js文件，她其实就是存放映射关系的。
+
+> inline:如果添加一个inline，就会将打包生成的js文件和.map合并。map文件变成base64文件放在打包后js文件底部。
+
+> cheap：（增加构建速度）
+1. 只提示多少行出错并不提示多少列出错 
+2. 只负责业务代码的错误，第三方插件错误并不会提示（比如loader的错误并不会提示）
+
+> module:cheap中存在module，就是表示cheap打包后的代码，提示错误不仅会管理业务代码还会管理第三方模块的错误。
+
+> eval:通过eval方式进行代码打包，eval执行形式进行打包的。（并不会生成.map，构建速度最快的方式）。
+
+###### sourceMap配置建议。
+
++ development建议:建议使用cheap-module-eval-source-map 这种方式 提示比较全同时打包速度比较快的。
++ production建议：绝大多数不需要sourceMap配置，如果出现问题可以配置cheap-module-source-map线上代码有问题也可以定位错误。
