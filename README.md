@@ -141,3 +141,35 @@ module.exports = {
     2. verbose:打印信息。
     ...
 > 之前配置更新了。。用到的还是查文档吧。。更新太快了。
+
+### Entry和Output的基础配置
+
+
+#### entry
+> 顾名思义，打包入口文件。
+```
+// 入口文件路径
+entry: "./src/index.js"
+// 这样配置就相当于 默认生成文件是main.js
+entry: {
+    main:"./src/index.js"
+}
+// 多入口文件打包
+entry: {
+    main:"./src/index.js",
+    sub:"./src/main.js"
+}
+```
+#### output
+> 打包出口文件
+```
+output: {
+    // 打包生成的文件名称
+    filename:"[name].[hash].js",
+    // 生成的文件打包后放在的path路径
+    path:path.resolve(__dirname,"dist"),
+    // publicPath:将打包后的静态资源路径添加publicPath的路径
+    // 重新打包后，文件的路径都会增加http://cdn.com.cn的前缀。（关于publicPath后边会相详细讲解）
+    publicPath:"http://cdn.com.cn"
+}
+```
