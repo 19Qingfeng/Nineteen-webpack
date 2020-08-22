@@ -14,7 +14,10 @@ module.exports = {
         index: "wanghaoyu.html",
         open: true,
         contentBase: path.resolve(__dirname, "./distaaasdfa"),
-        port: 9000
+        port: 9000,
+        hot: true,
+        // 如果hot没有起作用 配置hotonly:true，hot不生效也也不会刷新页面
+        hotOnly: true
     },
     // 配置loader
     module: {

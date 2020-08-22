@@ -288,6 +288,71 @@ script: {
 npm install express  webpack-dev-middlerware -D
 // 其他配置参考本次commit
 ```
+### Hot Module Replacement
+> 关于HMR做到的功能我就不在累赘了，热重载现在cli项目全都在使用。
+
+> 讲讲之前版本的hotModuleReplacement。
+```
+const webpack = require("webpack")
+// 之前版本在配置devserver的hot为true的时候还需要额外引入hotModuleReplacment插件
+devSercer:{
+    ...
+    hot:true
+},
+plugins:[
+    ...
+    new webpack.hotModuleReplacementPlugin()
+]
+// 这样才可以启动热更新。
+```
+> 但是现在新版本的webpack中已经自己集成了hotModuleReplacement插件了。我们如果需要热更新需要的配置仅仅是在devServer中hot:true就可以了。
++ devServer热冲载配置项目。
+    1. hot:true 开启热重启功能。
+    2. hotOnly:true 表示即便HRM的功能没有刷新，配置true浏览器也不会自动刷新。
+---
+> 稍微说点关于HRM的实际实现。
+>> 参考本次（HRM）commit的代码，我们可以发现对于js文件不同模块的的HRM需要我们使用HRM的accept语法去做判断独立更新各自的模块。比如:
+```
+// main.js入口文件
+import count from "./HRM/count"
+import number from "./HRM/number"
+
+// count这个函数是在页面添加一个div，div的值是1，每次点击都会++。
+// number这个函数运行后会在页面添加一个div，div的值是固定的
+count()
+number()
+
+```
+> 这样的写法的话会存在一个潜在的问题。
+>> 每次当我点击页面很多次，也就是count值变化之后。我再去代码中修改number的值因为HRM的缘故count值就会跟随刷新而重制，这显然不是我所需要的样子。
+>>> 我需要的是每次在代码中独立更新number的值的时候count的内容并不会被HRM刷新改变。换句话说也就是希望页面每个模块之间独立被HRM进行更新。
++ module.hot.accept(name,cb)
+    1. name表示传入的模块路径，比如import的js文件模块。
+    2. name模块发生变化的时候，就会执行cb函数。
+```
+// main.js中 如果当前项目支持热更新
+if(module.hot) {
+    module.hot.accpet("./HRM/number", () => {
+        // HRM会监听当number文件发生变化的时候执行的逻辑
+        const numberDom = document.getElementById('number')
+        document.body.removeChild(numberDom)
+        number()
+    })
+}
+// 这样的话每当我们在代码中修改number模块，那么HRM就会走到上边的处理逻辑中并不会进行全局刷新JS文件了。
+// 达到了修改number.js而不影响页面上的count.js的文件和页面状态。
+```
++ 也就是说我们可以通过module.hot.accept这个方法覆盖每个模块文件的HRM的默认热更新形式从而达到不去影响别的逻辑（交给我们自己处理），比如上边的代码就覆盖了number.js改变的时候HRM帮我们执行的逻辑。这样就不会对于每次改变都会刷新整个页面逻辑了。
++ 默认不配置module.hot.accept的时候每次改变任意文件它就会帮助我们刷新整个页面。
+###### 关于module.hot.accept的实现
++ 其实我们在修改css文件的时候发现css也是独立模块互不影响的，并不像js文件这样全局刷新。引入CSS文件的改变理论上我们也应该通过accept方法进行监听修改逻辑，这是因为module.hot.accept这些逻辑在css-loader上底层已经帮我们进行了实现，我们使用css-loader的时候就不需要额外实现这段代码了。
++ 在Vue中我们在书写代码的时候也是模块之间互不影响的，同理其实是vue-loader底层帮我们实现了module.hot.accept的逻辑。
++ React中借助了一些babel-prest内置了module.hot.accept各个模块之间的实现。
++ 通常项目中我们是不需要额外书写HRM的accept监听逻辑的，但是如果我们在代码中引入了一些比较偏的文件，比如一些数据文件。这些文件的loader中并没有实现accept()的逻辑，这时候就需要我们实现了。
++ 本质上HRM都需要实现accept()方法实现独立更新，但是一些第三方插件已经帮我们实现了。这里的话还是需要给大家说一下，有时候一些文件没有实现那么就需要我们去自己实现了。
++ HRM提供的方法不仅仅是accept()还有很多，比如decline()等等，具体使用的时候可以去文档查询。[module-api](https://webpack.js.org/api/hot-module-replacement/#module-api)
++ [HRM实现原理](https://www.webpackjs.com/concepts/hot-module-replacement/)
++ 问题待解决:accept中如果代码出错，控制台并不报错。why？
 
 
 
