@@ -18,4 +18,4 @@
 
 // 使用sourceMap
 // 故意写错 devTool:"none" 没有映射关系
-consolee.log("hello world")
+console.log("hello world1111")

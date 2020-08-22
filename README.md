@@ -175,7 +175,7 @@ output: {
 ```
 
 ### SourceMap
-> srouceMap作用：它是一个映射关系，如果代码有报错，通过sourceMap可以将打包后代码出错的地方映射到源码中出错的地方。
+> sourceMap作用：它是一个映射关系，如果代码有报错，通过sourceMap可以将打包后代码出错的地方映射到源码中出错的地方。
 
 > 经过映射的转化我们也就可以快速精准的定位问题。
 
@@ -185,19 +185,109 @@ output: {
 
 > Tips:
 
-> 配置sourceMap后打包后的代码会对应出现map.js文件，她其实就是存放映射关系的。
++ 配置sourceMap后打包后的代码会对应出现map.js文件，她其实就是存放映射关系的(非inline)。
 
-> inline:如果添加一个inline，就会将打包生成的js文件和.map合并。map文件变成base64文件放在打包后js文件底部。
++ inline:如果添加一个inline，就会将打包生成的js文件和.map合并。map文件变成base64文件放在打包后js文件底部。
 
-> cheap：（增加构建速度）
-1. 只提示多少行出错并不提示多少列出错 
-2. 只负责业务代码的错误，第三方插件错误并不会提示（比如loader的错误并不会提示）
++ cheap：（增加构建速度）
+    1. 只提示多少行出错并不提示多少列出错 
+    2. 只负责业务代码的错误，第三方插件错误并不会提示（比如loader的错误并不会提示）
 
-> module:cheap中存在module，就是表示cheap打包后的代码，提示错误不仅会管理业务代码还会管理第三方模块的错误。
++ module:cheap中存在module，就是表示cheap打包后的代码，提示错误不仅会管理业务代码还会管理第三方模块的错误。
 
-> eval:通过eval方式进行代码打包，eval执行形式进行打包的。（并不会生成.map，构建速度最快的方式）。
++ eval:通过eval方式进行代码打包，eval执行形式进行打包映射对应错误。（并不会生成.map，构建速度最快的方式）。
 
 ###### sourceMap配置建议。
 
 + development建议:建议使用cheap-module-eval-source-map 这种方式 提示比较全同时打包速度比较快的。
 + production建议：绝大多数不需要sourceMap配置，如果出现问题可以配置cheap-module-source-map线上代码有问题也可以定位错误。
+
+### DevServer
+> 每次都需要打包后打开html进行查看，devserve帮助我们在本地启动一个node环境解决这个问题。
+
+1. webpack's Watch Mode 
+```
+// package.json:
+scripts: {
+    "watch":"webpack --watch"
+} 
+```
+> --watch这个参数，监控到webpack所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些ajax的请求调试，而且每次打包过后都需自己手动刷新浏览器。
+2. webpack-dev-server（推荐）
+
+> webapck内部已经内置了devServer的配置，但是注意我们还是需要安装webpack-dev-server这个插件。
+
++ index：默认识别html文件名为index.html，如果生成HTML的文件名非index，则需要在index配置中改成对应的才可以正确启动。
+> HTML template is required to serve the bundle, usually it is an index.html file. Make sure that script references are added into HTML, webpack-dev-server doesn't inject them automatically.
+
++ contextBase:指定静态资源的根目录的，意思就是不受webpack控制的资源文件。读取的路径，比方在没有设置htmlwebpackplugin的时候，devserver会根据contentbase的目录去查找到对应html文件从而打开。但是一旦使用了htmlwebpackplugin，contentbase就会没有效果。htmlwebapckplugin生成的文件devserver会直接打开而忽略contentbase配置。
+> contentBase，首先devserver需要依赖一个html文件去进行打开我们的网页然后实现启动服务监听，所以contentBase指向的路径就是devServer所依赖的html文件所在的路径，这个html文件名字默认去寻找index.html文件.如果我们需要依赖其他html文件那么就需要配置filename。
+
+> 其实devSever实质上也是在我们修改代码的时候自动帮我们构建代码然后实现更新，所以devServer打包后的资源（比如js文件）就会放在contentBase下的目录中。可以这样讲，devServer需要依赖contentBase指向的html文件，同时他也会将打包后的文件存在放contentBase目录中去（虚拟目录看不到）。
+
+> 注意，如果项目中配置了html-webpack-plugin的话那么contentBase我的实践中会无效，她不会去根据配置路径去寻找html文件而是会启动html-wepback-plugin生成的html文件，即使conetentBase路径和生成的html路径不一致。会以html-webpack-plugin路径为准。
+
+> 官网给出的解释是：告诉devServer寻找静态资源的路径，只有在需要提供静态资源的时候才会这么做（比如html文件）。
+
+> contentBase可以传递一个String代表生成静态资源路径和生成静态资源存放路径，也可以传递一个Array[String],表示在多个文件中dev服务可以去寻找静态资源。
+
+> 关于contentBase的确也踩了坑，谨记一句话：告诉devServer生成的静态资源比如打包后的js文件存放的目录以及同时告诉devServer启动服务依赖的静态资源在哪里（比如需要依赖的html文件）。但是在配置后html-webpack-plugin失去效果。（所以平常项目中如果使用html-webpack-plugin就无需配置contentBase）。
+
++ open
++ port
++ proxy:如果你有单独的后端开发服务器 API，并且希望在同域名下发送 API 请求 ，那么代理某些 URL 会很有用。
+```
+ proxy:  {
+     // /api开头的请求转发到3000下
+     // /api/test -> http://localhost:3000/api/test
+     "/api": "http://localhost:3000"
+ }
+
+```
++ publicPath
++ historyApiFallback
+> 说到historyApiFallback一定要介绍两种路由跳转方式。
+关于Hash和History路由区别和原理可以参考我的另一篇文章有详细介绍区别[router模式区别和实现原理](https://github.com/19Qingfeng/Router-way)
+
+> HistoryApiFallback针对于H5 History路由进行设置的，就比如vue-router中的history模式。比如我们访问localhost:8080/list这个页面，devserver会直接去寻找/list的资源但是这个时候并不存在这个资源这是我们前端路由设置的。所以可以使用HistoryApicallback设置访问不到重定向当主页然后代码就会根据url识别前端匹配到前端自己的路由。
+```
+devServer: {
+    historyApiFallback: true
+}
+// 也可以配置重写进行匹配路径
+module.exports = {
+  //...
+  devServer: {
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/$/, to: '/views/landing.html' },
+        { from: /^\/subpage/, to: '/views/subpage.html' },
+        { from: /./, to: '/views/404.html' }
+      ]
+    }
+  }
+};
+// 当然还可以配置一个函数
+devServer:{
+    ...
+    hostoryApiFallback:{
+        from:/^\/libs\/.*$/,
+        to:function(context){
+            return `\bower_componets`+ context.parseUrl.pathname
+        }
+    }
+}
+```
+3. webpack-dev-middlerware
+> 扩展一下。自己搭建一个nodeServer,使用webpack-dev-middleware和express。
+```
+script: {
+    "middleware":"node server.js"
+}
+
+npm install express  webpack-dev-middlerware -D
+// 其他配置参考本次commit
+```
+
+
+

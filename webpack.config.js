@@ -10,6 +10,12 @@ module.exports = {
         main: path.resolve(__dirname, "./src/main.js")
     },
     devtool: "inline-source-map",
+    devServer: {
+        index: "wanghaoyu.html",
+        open: true,
+        contentBase: path.resolve(__dirname, "./distaaasdfa"),
+        port: 9000
+    },
     // 配置loader
     module: {
         rules: [{
@@ -72,6 +78,7 @@ module.exports = {
     ],
     output: {
         filename: "index.js",
+        publicPath: "/",
         // 相对于当前(webpack.config.js)的dist文件夹下
         path: path.resolve(__dirname, "dist/")
     }
