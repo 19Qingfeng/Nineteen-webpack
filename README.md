@@ -388,7 +388,7 @@ if(module.hot) {
 
 - 其实我们在修改 css 文件的时候发现 css 也是独立模块互不影响的，并不像 js 文件这样全局刷新。引入 CSS 文件的改变理论上我们也应该通过 accept 方法进行监听修改逻辑，这是因为 module.hot.accept 这些逻辑在 css-loader 上底层已经帮我们进行了实现，我们使用 css-loader 的时候就不需要额外实现这段代码了。
 - 在 Vue 中我们在书写代码的时候也是模块之间互不影响的，同理其实是 vue-loader 底层帮我们实现了 module.hot.accept 的逻辑。
-- React 中借助了一些 babel-prest 内置了 module.hot.accept 各个模块之间的实现。
+- React 中借助了一些 babel-preset 内置了 module.hot.accept 各个模块之间的实现。
 - 通常项目中我们是不需要额外书写 HRM 的 accept 监听逻辑的，但是如果我们在代码中引入了一些比较偏的文件，比如一些数据文件。这些文件的 loader 中并没有实现 accept()的逻辑，这时候就需要我们实现了。
 - 本质上 HRM 都需要实现 accept()方法实现独立更新，但是一些第三方插件已经帮我们实现了。这里的话还是需要给大家说一下，有时候一些文件没有实现那么就需要我们去自己实现了。
 - HRM 提供的方法不仅仅是 accept()还有很多，比如 decline()等等，具体使用的时候可以去文档查询。[module-api](https://webpack.js.org/api/hot-module-replacement/#module-api)
@@ -507,7 +507,7 @@ options: {
   4. 2，3 都要分别额外安装不同的 npm 包。
      > The plugin defaults to assuming that all polyfillable APIs will be provided by the user. Otherwise the corejs option needs to be specified.
      >
-     > > 默认 false 表示 transform-runtime 插件认为所以新语法的可以填充的 api 都用用户手动提供，这里配置 2 的意思是说支持全局变量和静态属性，如果需要实例属性需要配置 3，详情可以参照(官网配置)[https://babeljs.io/docs/en/babel-plugin-transform-runtime]。
+     > > 默认 false 表示 transform-runtime 插件认为所以新语法的可以填充的 api 都用用户手动提供，这里配置 2 的意思是说支持全局变量和静态属性，如果需要实例属性需要配置 3，详情可以参照[官网配置](https://babeljs.io/docs/en/babel-plugin-transform-runtime)。
      > >
      > > > 以及修改了 corejs 的配置为 2 后需要额外安装对应的模块，具体还是参照[corejs 配置项手册](https://babeljs.io/docs/en/babel-plugin-transform-runtime)
 
