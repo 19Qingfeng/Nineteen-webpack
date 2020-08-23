@@ -1,7 +1,11 @@
 # 19-webpack
 
 重新温习温习 webpack。<br>
-每次 commit 配对对应 Demo，webpack4.X 常用配置以及性能优化。
+每次 commit 配对对应 Demo，webpack4.X 常用配置以及性能优化。更新中 ing
+
+## webpack 基础内容讲解
+
+---
 
 ### 什么是 loader？
 
@@ -110,6 +114,7 @@ import style from "src/index.scss"
 
 - file-loader 帮助 webapck 识别 ttf,eot,woff 等格式的字体文件处理。
 - file-loader 配置和 url-loader 类似，其实 fileloader 也可以处理图片文件，只不过 url-loader 存在 limit 配置可以转成 base64.
+- file-loader其实可以处理的文件类型有很多做，简单来说他的作用就是将这些匹配文件打包后放在output中去。
 
 ### Plugin
 
@@ -519,3 +524,33 @@ options: {
 - 无论是 polyfill 还是 transform-runtime 都是对于 ES6 一些内置模块/属性/方法在 ES5 中进行转译的规则，比如 Promise，proxy,reflect 等等通过 ES5 代码实现让低版本浏览器识别。
 - babel-preset-env 是将 ES6 语法转译成 ES6 的，比如 let，const 等。
 - 所以 polyfill 和 transform-runtime 其实是同一种作用，但是 preset-env 和他们实现的功能是不同的。可以理解为 preset-env 是基础，所以无论 polyfill 还是 transform-runtime 这两种补充内置模块转译的规则，仍然都需要使用 env 去转译基础语法。
+
+### Vue 和 React
+
+- Vue 使用 [vue-loader](https://vue-loader.vuejs.org/) 就不过多累赘了。
+- React 需要使用 [babel-preset-react](https://babeljs.io/docs/en/babel-preset-react) 插件，注意顺序。
+
+```
+{
+    // 从下往上 先使用react处理js文件识别react代码
+    // 在使用preset-env处理ES6+语法转换
+    "presets": [
+        ["@babel/preset-env"],
+        ["@babel/preset-react"]
+    ],
+    "plugins": [
+        ["@babel/plugin-transform-runtime", {
+            "absoluteRuntime": false,
+            "corejs": 2, // 默认是false 需要手动改为2
+            "helpers": true,
+            "regenerator": true,
+            "useESModules": false,
+            "version": "7.0.0-beta.0"
+        }]
+    ]
+}
+```
+
+###### 至此，webpack 基本内容结束。
+
+---
