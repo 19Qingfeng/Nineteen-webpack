@@ -1,50 +1,53 @@
 # 19-webpack
-重新温习温习webpack。<br>
-每次commit配对对应Demo，webpack4.X常用配置以及性能优化。
 
+重新温习温习 webpack。<br>
+每次 commit 配对对应 Demo，webpack4.X 常用配置以及性能优化。
 
-### 什么是loader？
-> webpack默认知道如何打包js文件，对于一些css，图片，字体等非js文件需要使用使用loader去处理让webpack识别通过loader处理。
-<br>
+### 什么是 loader？
 
-File-loader举例 -> 当webpack碰到test匹配的.jpeg结尾的文件就会交给use的file-loader处理。<br>
+> webpack 默认知道如何打包 js 文件，对于一些 css，图片，字体等非 js 文件需要使用使用 loader 去处理让 webpack 识别通过 loader 处理。
+> <br>
 
-+ 首先遇到test-img.jpeg会将它移动到dist目录下，同时会修改名称。(文件移动到打包目录下)
-+ 然后得到一个图片相对与dist目录的一个名称然后讲名称返回给require的变量default属性中。(同时获得移动文件的地址)
+File-loader 举例 -> 当 webpack 碰到 test 匹配的.jpeg 结尾的文件就会交给 use 的 file-loader 处理。<br>
 
-> 其实loader就是一个特定方案，让webapck对一些不支持的文件通过loader认识他们并且进行打包。<br>
-> webpack对于非js文件通过loader进行识别。<br>
-> module中的rules进行配置。
+- 首先遇到 test-img.jpeg 会将它移动到 dist 目录下，同时会修改名称。(文件移动到打包目录下)
+- 然后得到一个图片相对与 dist 目录的一个名称然后讲名称返回给 require 的变量 default 属性中。(同时获得移动文件的地址)
 
+> 其实 loader 就是一个特定方案，让 webapck 对一些不支持的文件通过 loader 认识他们并且进行打包。<br>
+> webpack 对于非 js 文件通过 loader 进行识别。<br>
+> module 中的 rules 进行配置。
 
-#### 使用loader打包静态资源(图片)
-+ 处理图片资源File-loader和Url-loader。
-+ url-loader和file-loader配置和相似，url-loader会将配置小于limit(单位为btye 1024 -> 1Kb)会转化为base64。
+#### 使用 loader 打包静态资源(图片)
 
-#### 使用loader处理样式文件
+- 处理图片资源 File-loader 和 Url-loader。
+- url-loader 和 file-loader 配置和相似，url-loader 会将配置小于 limit(单位为 btye 1024 -> 1Kb)会转化为 base64。
 
-1. 使用loader处理样式文件(1)
+#### 使用 loader 处理样式文件
 
-+ loader的处理是从右往左（从上往下），当一个文件需要被多个loader处理的时候。
-+ 处理Css文件通常需要两个loader，css-loader和style-loder。
-+ 先使用css文件处理，如果有多个css文件互相引入，css-loader会先进行处理->分析出css文件之间的关系，最终将css文件合并成为一个css文件。
-+ css-loader处理完毕后，style-loader会将生成的一个css文件挂载在html页面的head标签的style样式上。
-+ 如果要使用less，scss等预处理器，那么在碰到less等后缀文件的时候，需要额外引入对应loader进行处对应文件。
-+ sass-loader(将less语法编译成css语法) -> css-loader(处理css文件关系生成css文件) -> style-loader(加入页面head标签)
-+ sass-loader(npm install sass-loader node-sass -D)
-+ 针对一些Css属性的前缀，C3不同厂商的前缀自动添加，可以使用postcss-loader中的aotoprefexer插件自动添加。
-+ postcss-loader(处理前缀autoprefixer插件) > sass-loader > css-loader > style-loader
-+ postcss.config.js进行配置文件设置。[postcss-loader](https://www.webpackjs.com/loaders/postcss-loader/)
+1. 使用 loader 处理样式文件(1)
+
+- loader 的处理是从右往左（从上往下），当一个文件需要被多个 loader 处理的时候。
+- 处理 Css 文件通常需要两个 loader，css-loader 和 style-loder。
+- 先使用 css 文件处理，如果有多个 css 文件互相引入，css-loader 会先进行处理->分析出 css 文件之间的关系，最终将 css 文件合并成为一个 css 文件。
+- css-loader 处理完毕后，style-loader 会将生成的一个 css 文件挂载在 html 页面的 head 标签的 style 样式上。
+- 如果要使用 less，scss 等预处理器，那么在碰到 less 等后缀文件的时候，需要额外引入对应 loader 进行处对应文件。
+- sass-loader(将 less 语法编译成 css 语法) -> css-loader(处理 css 文件关系生成 css 文件) -> style-loader(加入页面 head 标签)
+- sass-loader(npm install sass-loader node-sass -D)
+- 针对一些 Css 属性的前缀，C3 不同厂商的前缀自动添加，可以使用 postcss-loader 中的 aotoprefexer 插件自动添加。
+- postcss-loader(处理前缀 autoprefixer 插件) > sass-loader > css-loader > style-loader
+- postcss.config.js 进行配置文件设置。[postcss-loader](https://www.webpackjs.com/loaders/postcss-loader/)
 
 > Tips: <br>
 
-> 打包默认认为在高级浏览器中使用这些特性，高级浏览器已经没必要加这些前缀了。所以就算配置了autoprefixer也不会添加，package中browserList里面加上老版本浏览器的兼容才会进行添加。
-> 关于browserList，可以在Can I usr 查。
+> 打包默认认为在高级浏览器中使用这些特性，高级浏览器已经没必要加这些前缀了。所以就算配置了 autoprefixer 也不会添加，package 中 browserList 里面加上老版本浏览器的兼容才会进行添加。
+> 关于 browserList，可以在 Can I usr 查。
 
-2. 使用lodaer处理样式文件(2)
-+ CSsloader常用配置项。
-    1. import-loaders:(Number),当使用css文件的时候。如果存在样式文件内引入样式文件也就是在样式文件中import在引入其他样式。webpack在打包的时候就不会去走到css-loader之前的loader处理了。这个时候importLoaders配置的number，就会保证在样式文件在在引入其他的样式文件，那么也会完整执行样式文件的loader顺序。
-    2. modules:true.开启CSs模块化，使用过react的朋友应该有感受。如果在webpack中直接引入样式文件那么会是全局的引入样式文件。开启cssloader的modules配置的话那么就会使样式文件模块化。
+2. 使用 lodaer 处理样式文件(2)
+
+- Cssloader 常用配置项。
+  1. import-loaders:(Number),当使用 css 文件的时候。如果存在样式文件内引入样式文件也就是在样式文件中 import 在引入其他样式。webpack 在打包的时候就不会去走到 css-loader 之前的 loader 处理了。这个时候 importLoaders 配置的 number，就会保证在样式文件在在引入其他的样式文件，那么也会完整执行样式文件的 loader 顺序。
+  2. modules:true.开启 Css 模块化，使用过 react 的朋友应该有感受。如果在 webpack 中直接引入样式文件那么会是全局的引入样式文件。开启 cssloader 的 modules 配置的话那么就会使样式文件模块化。
+
 ```
 {
                 test: /\.scss$/,
@@ -69,8 +72,9 @@ import style from "src/index.scss"
 <div class=style.container></div>  // div上增加style样式文件中的container类
 ```
 
-> 关于CssModules的配置，如果开启了cssModuels那么匹配到的文件都会是模块化的，无论何种方式引入都不会是全局生效。业界目前主流解决方案是自定义文件后缀或者增加文件名称。<br>
-> 比如React中以xxx.modules.css结尾的文件认为是modules局部样式，普通xxx.css是全局样式。要达成这样的效果需要配置两个loader的rules，比如
+> 关于 CssModules 的配置，如果开启了 cssModuels 那么匹配到的文件都会是模块化的，无论何种方式引入都不会是全局生效。业界目前主流解决方案是自定义文件后缀或者增加文件名称。<br>
+> 比如 React 中以 xxx.modules.css 结尾的文件认为是 modules 局部样式，普通 xxx.css 是全局样式。要达成这样的效果需要配置两个 loader 的 rules，比如
+
 ```
 {
                 test: /\.scss$/,
@@ -102,23 +106,27 @@ import style from "src/index.scss"
 }
 ```
 
-#### 使用loader处理字体文件
-+ file-loader帮助webapck识别ttf,eot,woff等格式的字体文件处理。
-+ file-loader配置和url-loader类似，其实fileloader也可以处理图片文件，只不过url-loader存在limit配置可以转成base64.
+#### 使用 loader 处理字体文件
+
+- file-loader 帮助 webapck 识别 ttf,eot,woff 等格式的字体文件处理。
+- file-loader 配置和 url-loader 类似，其实 fileloader 也可以处理图片文件，只不过 url-loader 存在 limit 配置可以转成 base64.
 
 ### Plugin
 
-> Plugin本质上就是在webpack运行到某个时刻的时候，帮我们做一些事情，类似生命周期函数。
+> Plugin 本质上就是在 webpack 运行到某个时刻的时候，帮我们做一些事情，类似生命周期函数。
 
 #### [HTML-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
-> HTML-webpack-plugin会在打包结束后，自动生成一个html文件，并把打包生成的js文件插入到html文件中。
-+ 常用配置信息
-    1. title:用于生成Html的标题。（配合ejs或各框架使用- <%= htmlWebpackPlugin.options.title %>）
-    2. filename:生成的名称，默认index.html。 
-    3. template:指定路径，用于生成html文件时的模板文件。
-    4. inject :true | ‘head’ | ‘body’ | false 。把所有产出文件注入到给定的 template 或templateContent。当传入 true或者 ‘body’时所有javascript资源将被放置在body元素的底部，“head”则会放在head元素内。
-    5. favicon : 给定的图标路径，可将其添加到输出html中。
-    ...
+
+> HTML-webpack-plugin 会在打包结束后，自动生成一个 html 文件，并把打包生成的 js 文件插入到 html 文件中。
+
+- 常用配置信息
+  1. title:用于生成 Html 的标题。（配合 ejs 或各框架使用- <%= htmlWebpackPlugin.options.title %>）
+  2. filename:生成的名称，默认 index.html。
+  3. template:指定路径，用于生成 html 文件时的模板文件。
+  4. inject :true | ‘head’ | ‘body’ | false 。把所有产出文件注入到给定的 template 或 templateContent。当传入 true 或者 ‘body’时所有 javascript 资源将被放置在 body 元素的底部，“head”则会放在 head 元素内。
+  5. favicon : 给定的图标路径，可将其添加到输出 html 中。
+     ...
+
 ```
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
@@ -134,19 +142,20 @@ module.exports = {
 ```
 
 #### [Clean-webpack-plugin](https://www.npmjs.com/package/clean-webpack-plugin)
+
 > 并非官方推荐，
 > 打包运行前进行之前打包文件的删除。默认可以不传递任何参数。
-+ 常用配置
-    1. dry:默认false，删除mock文件。
-    2. verbose:打印信息。
-    ...
-> 之前配置更新了。。用到的还是查文档吧。。更新太快了。
 
-### Entry和Output的基础配置
+- 常用配置 1. dry:默认 false，删除 mock 文件。 2. verbose:打印信息。
+  ...
+  > 之前配置更新了。。用到的还是查文档吧。。更新太快了。
 
+### Entry 和 Output 的基础配置
 
 #### entry
+
 > 顾名思义，打包入口文件。
+
 ```
 // 入口文件路径
 entry: "./src/index.js"
@@ -160,8 +169,11 @@ entry: {
     sub:"./src/main.js"
 }
 ```
+
 #### output
+
 > 打包出口文件
+
 ```
 output: {
     // 打包生成的文件名称
@@ -175,67 +187,75 @@ output: {
 ```
 
 ### SourceMap
-> sourceMap作用：它是一个映射关系，如果代码有报错，通过sourceMap可以将打包后代码出错的地方映射到源码中出错的地方。
+
+> sourceMap 作用：它是一个映射关系，如果代码有报错，通过 sourceMap 可以将打包后代码出错的地方映射到源码中出错的地方。
 
 > 经过映射的转化我们也就可以快速精准的定位问题。
 
-#### devtool (sourceMap配置属性)
+#### devtool (sourceMap 配置属性)
 
-###### [devtool配置属性和对应构建速度](url)
+###### [devtool 配置属性和对应构建速度](url)
 
 > Tips:
 
-+ 配置sourceMap后打包后的代码会对应出现map.js文件，她其实就是存放映射关系的(非inline)。
+- 配置 sourceMap 后打包后的代码会对应出现 map.js 文件，她其实就是存放映射关系的(非 inline)。
 
-+ inline:如果添加一个inline，就会将打包生成的js文件和.map合并。map文件变成base64文件放在打包后js文件底部。
+- inline:如果添加一个 inline，就会将打包生成的 js 文件和.map 合并。map 文件变成 base64 文件放在打包后 js 文件底部。
 
-+ cheap：（增加构建速度）
-    1. 只提示多少行出错并不提示多少列出错 
-    2. 只负责业务代码的错误，第三方插件错误并不会提示（比如loader的错误并不会提示）
+- cheap：（增加构建速度）
 
-+ module:cheap中存在module，就是表示cheap打包后的代码，提示错误不仅会管理业务代码还会管理第三方模块的错误。
+  1. 只提示多少行出错并不提示多少列出错
+  2. 只负责业务代码的错误，第三方插件错误并不会提示（比如 loader 的错误并不会提示）
 
-+ eval:通过eval方式进行代码打包，eval执行形式进行打包映射对应错误。（并不会生成.map，构建速度最快的方式）。
+- module:cheap 中存在 module，就是表示 cheap 打包后的代码，提示错误不仅会管理业务代码还会管理第三方模块的错误。
 
-###### sourceMap配置建议。
+- eval:通过 eval 方式进行代码打包，eval 执行形式进行打包映射对应错误。（并不会生成.map，构建速度最快的方式）。
 
-+ development建议:建议使用cheap-module-eval-source-map 这种方式 提示比较全同时打包速度比较快的。
-+ production建议：绝大多数不需要sourceMap配置，如果出现问题可以配置cheap-module-source-map线上代码有问题也可以定位错误。
+###### sourceMap 配置建议。
+
+- development 建议:建议使用 cheap-module-eval-source-map 这种方式 提示比较全同时打包速度比较快的。
+- production 建议：绝大多数不需要 sourceMap 配置，如果出现问题可以配置 cheap-module-source-map 线上代码有问题也可以定位错误。
 
 ### DevServer
-> 每次都需要打包后打开html进行查看，devserve帮助我们在本地启动一个node环境解决这个问题。
 
-1. webpack's Watch Mode 
+> 每次都需要打包后打开 html 进行查看，devserve 帮助我们在本地启动一个 node 环境解决这个问题。
+
+1. webpack's Watch Mode
+
 ```
 // package.json:
 scripts: {
     "watch":"webpack --watch"
-} 
+}
 ```
-> --watch这个参数，监控到webpack所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些ajax的请求调试，而且每次打包过后都需自己手动刷新浏览器。
+
+> --watch 这个参数，监控到 webpack 所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些 ajax 的请求调试，而且每次打包过后都需自己手动刷新浏览器。
+
 2. webpack-dev-server（推荐）
 
-> webapck内部已经内置了devServer的配置，但是注意我们还是需要安装webpack-dev-server这个插件。
+> webapck 内部已经内置了 devServer 的配置，但是注意我们还是需要安装 webpack-dev-server 这个插件。
 
-+ index：默认识别html文件名为index.html，如果生成HTML的文件名非index，则需要在index配置中改成对应的才可以正确启动。
-> HTML template is required to serve the bundle, usually it is an index.html file. Make sure that script references are added into HTML, webpack-dev-server doesn't inject them automatically.
+- index：默认识别 html 文件名为 index.html，如果生成 HTML 的文件名非 index，则需要在 index 配置中改成对应的才可以正确启动。
 
-+ contextBase:指定静态资源的根目录的，意思就是不受webpack控制的资源文件。读取的路径，比方在没有设置htmlwebpackplugin的时候，devserver会根据contentbase的目录去查找到对应html文件从而打开。但是一旦使用了htmlwebpackplugin，contentbase就会没有效果。htmlwebapckplugin生成的文件devserver会直接打开而忽略contentbase配置。
-> contentBase，首先devserver需要依赖一个html文件去进行打开我们的网页然后实现启动服务监听，所以contentBase指向的路径就是devServer所依赖的html文件所在的路径，这个html文件名字默认去寻找index.html文件.如果我们需要依赖其他html文件那么就需要配置filename。
+  > HTML template is required to serve the bundle, usually it is an index.html file. Make sure that script references are added into HTML, webpack-dev-server doesn't inject them automatically.
 
-> 其实devSever实质上也是在我们修改代码的时候自动帮我们构建代码然后实现更新，所以devServer打包后的资源（比如js文件）就会放在contentBase下的目录中。可以这样讲，devServer需要依赖contentBase指向的html文件，同时他也会将打包后的文件存在放contentBase目录中去（虚拟目录看不到）。
+- contextBase:指定静态资源的根目录的，意思就是不受 webpack 控制的资源文件。读取的路径，比方在没有设置 htmlwebpackplugin 的时候，devserver 会根据 contentbase 的目录去查找到对应 html 文件从而打开。但是一旦使用了 htmlwebpackplugin，contentbase 就会没有效果。htmlwebapckplugin 生成的文件 devserver 会直接打开而忽略 contentbase 配置。
+  > contentBase，首先 devserver 需要依赖一个 html 文件去进行打开我们的网页然后实现启动服务监听，所以 contentBase 指向的路径就是 devServer 所依赖的 html 文件所在的路径，这个 html 文件名字默认去寻找 index.html 文件.如果我们需要依赖其他 html 文件那么就需要配置 filename。
 
-> 注意，如果项目中配置了html-webpack-plugin的话那么contentBase我的实践中会无效，她不会去根据配置路径去寻找html文件而是会启动html-wepback-plugin生成的html文件，即使conetentBase路径和生成的html路径不一致。会以html-webpack-plugin路径为准。
+> 其实 devSever 实质上也是在我们修改代码的时候自动帮我们构建代码然后实现更新，所以 devServer 打包后的资源（比如 js 文件）就会放在 contentBase 下的目录中。可以这样讲，devServer 需要依赖 contentBase 指向的 html 文件，同时他也会将打包后的文件存在放 contentBase 目录中去（虚拟目录看不到）。
 
-> 官网给出的解释是：告诉devServer寻找静态资源的路径，只有在需要提供静态资源的时候才会这么做（比如html文件）。
+> 注意，如果项目中配置了 html-webpack-plugin 的话那么 contentBase 我的实践中会无效，她不会去根据配置路径去寻找 html 文件而是会启动 html-wepback-plugin 生成的 html 文件，即使 conetentBase 路径和生成的 html 路径不一致。会以 html-webpack-plugin 路径为准。
 
-> contentBase可以传递一个String代表生成静态资源路径和生成静态资源存放路径，也可以传递一个Array[String],表示在多个文件中dev服务可以去寻找静态资源。
+> 官网给出的解释是：告诉 devServer 寻找静态资源的路径，只有在需要提供静态资源的时候才会这么做（比如 html 文件）。
 
-> 关于contentBase的确也踩了坑，谨记一句话：告诉devServer生成的静态资源比如打包后的js文件存放的目录以及同时告诉devServer启动服务依赖的静态资源在哪里（比如需要依赖的html文件）。但是在配置后html-webpack-plugin失去效果。（所以平常项目中如果使用html-webpack-plugin就无需配置contentBase）。
+> contentBase 可以传递一个 String 代表生成静态资源路径和生成静态资源存放路径，也可以传递一个 Array[String],表示在多个文件中 dev 服务可以去寻找静态资源。
 
-+ open
-+ port
-+ proxy:如果你有单独的后端开发服务器 API，并且希望在同域名下发送 API 请求 ，那么代理某些 URL 会很有用。
+> 关于 contentBase 的确也踩了坑，谨记一句话：告诉 devServer 生成的静态资源比如打包后的 js 文件存放的目录以及同时告诉 devServer 启动服务依赖的静态资源在哪里（比如需要依赖的 html 文件）。但是在配置后 html-webpack-plugin 失去效果。（所以平常项目中如果使用 html-webpack-plugin 就无需配置 contentBase）。
+
+- open
+- port
+- proxy:如果你有单独的后端开发服务器 API，并且希望在同域名下发送 API 请求 ，那么代理某些 URL 会很有用。
+
 ```
  proxy:  {
      // /api开头的请求转发到3000下
@@ -244,12 +264,14 @@ scripts: {
  }
 
 ```
-+ publicPath
-+ historyApiFallback
-> 说到historyApiFallback一定要介绍两种路由跳转方式。
-关于Hash和History路由区别和原理可以参考我的另一篇文章有详细介绍区别[router模式区别和实现原理](https://github.com/19Qingfeng/Router-way)
 
-> HistoryApiFallback针对于H5 History路由进行设置的，就比如vue-router中的history模式。比如我们访问localhost:8080/list这个页面，devserver会直接去寻找/list的资源但是这个时候并不存在这个资源这是我们前端路由设置的。所以可以使用HistoryApicallback设置访问不到重定向当主页然后代码就会根据url识别前端匹配到前端自己的路由。
+- publicPath
+- historyApiFallback
+  > 说到 historyApiFallback 一定要介绍两种路由跳转方式。
+  > 关于 Hash 和 History 路由区别和原理可以参考我的另一篇文章有详细介绍区别[router 模式区别和实现原理](https://github.com/19Qingfeng/Router-way)
+
+> HistoryApiFallback 针对于 H5 History 路由进行设置的，就比如 vue-router 中的 history 模式。比如我们访问 localhost:8080/list 这个页面，devserver 会直接去寻找/list 的资源但是这个时候并不存在这个资源这是我们前端路由设置的。所以可以使用 HistoryApicallback 设置访问不到重定向当主页然后代码就会根据 url 识别前端匹配到前端自己的路由。
+
 ```
 devServer: {
     historyApiFallback: true
@@ -278,8 +300,10 @@ devServer:{
     }
 }
 ```
+
 3. webpack-dev-middlerware
-> 扩展一下。自己搭建一个nodeServer,使用webpack-dev-middleware和express。
+   > 扩展一下。自己搭建一个 nodeServer,使用 webpack-dev-middleware 和 express。
+
 ```
 script: {
     "middleware":"node server.js"
@@ -288,10 +312,13 @@ script: {
 npm install express  webpack-dev-middlerware -D
 // 其他配置参考本次commit
 ```
-### Hot Module Replacement
-> 关于HMR做到的功能我就不在累赘了，热重载现在cli项目全都在使用。
 
-> 讲讲之前版本的hotModuleReplacement。
+### Hot Module Replacement
+
+> 关于 HMR 做到的功能我就不在累赘了，热重载现在 cli 项目全都在使用。
+
+> 讲讲之前版本的 hotModuleReplacement。
+
 ```
 const webpack = require("webpack")
 // 之前版本在配置devserver的hot为true的时候还需要额外引入hotModuleReplacment插件
@@ -305,13 +332,19 @@ plugins:[
 ]
 // 这样才可以启动热更新。
 ```
-> 但是现在新版本的webpack中已经自己集成了hotModuleReplacement插件了。我们如果需要热更新需要的配置仅仅是在devServer中hot:true就可以了。
-+ devServer热冲载配置项目。
-    1. hot:true 开启热重启功能。
-    2. hotOnly:true 表示即便HRM的功能没有刷新，配置true浏览器也不会自动刷新。
+
+> 但是现在新版本的 webpack 中已经自己集成了 hotModuleReplacement 插件了。我们如果需要热更新需要的配置仅仅是在 devServer 中 hot:true 就可以了。
+
+- devServer 热冲载配置项目。
+  1. hot:true 开启热重启功能。
+  2. hotOnly:true 表示即便 HRM 的功能没有刷新，配置 true 浏览器也不会自动刷新。
+
 ---
-> 稍微说点关于HRM的实际实现。
->> 参考本次（HRM）commit的代码，我们可以发现对于js文件不同模块的的HRM需要我们使用HRM的accept语法去做判断独立更新各自的模块。比如:
+
+> 稍微说点关于 HRM 的实际实现。
+>
+> > 参考本次（HRM）commit 的代码，我们可以发现对于 js 文件不同模块的的 HRM 需要我们使用 HRM 的 accept 语法去做判断独立更新各自的模块。比如:
+
 ```
 // main.js入口文件
 import count from "./HRM/count"
@@ -323,12 +356,17 @@ count()
 number()
 
 ```
+
 > 这样的写法的话会存在一个潜在的问题。
->> 每次当我点击页面很多次，也就是count值变化之后。我再去代码中修改number的值因为HRM的缘故count值就会跟随刷新而重制，这显然不是我所需要的样子。
->>> 我需要的是每次在代码中独立更新number的值的时候count的内容并不会被HRM刷新改变。换句话说也就是希望页面每个模块之间独立被HRM进行更新。
-+ module.hot.accept(name,cb)
-    1. name表示传入的模块路径，比如import的js文件模块。
-    2. name模块发生变化的时候，就会执行cb函数。
+>
+> > 每次当我点击页面很多次，也就是 count 值变化之后。我再去代码中修改 number 的值因为 HRM 的缘故 count 值就会跟随刷新而重制，这显然不是我所需要的样子。
+> >
+> > > 我需要的是每次在代码中独立更新 number 的值的时候 count 的内容并不会被 HRM 刷新改变。换句话说也就是希望页面每个模块之间独立被 HRM 进行更新。
+
+- module.hot.accept(name,cb)
+  1. name 表示传入的模块路径，比如 import 的 js 文件模块。
+  2. name 模块发生变化的时候，就会执行 cb 函数。
+
 ```
 // main.js中 如果当前项目支持热更新
 if(module.hot) {
@@ -342,17 +380,142 @@ if(module.hot) {
 // 这样的话每当我们在代码中修改number模块，那么HRM就会走到上边的处理逻辑中并不会进行全局刷新JS文件了。
 // 达到了修改number.js而不影响页面上的count.js的文件和页面状态。
 ```
-+ 也就是说我们可以通过module.hot.accept这个方法覆盖每个模块文件的HRM的默认热更新形式从而达到不去影响别的逻辑（交给我们自己处理），比如上边的代码就覆盖了number.js改变的时候HRM帮我们执行的逻辑。这样就不会对于每次改变都会刷新整个页面逻辑了。
-+ 默认不配置module.hot.accept的时候每次改变任意文件它就会帮助我们刷新整个页面。
-###### 关于module.hot.accept的实现
-+ 其实我们在修改css文件的时候发现css也是独立模块互不影响的，并不像js文件这样全局刷新。引入CSS文件的改变理论上我们也应该通过accept方法进行监听修改逻辑，这是因为module.hot.accept这些逻辑在css-loader上底层已经帮我们进行了实现，我们使用css-loader的时候就不需要额外实现这段代码了。
-+ 在Vue中我们在书写代码的时候也是模块之间互不影响的，同理其实是vue-loader底层帮我们实现了module.hot.accept的逻辑。
-+ React中借助了一些babel-prest内置了module.hot.accept各个模块之间的实现。
-+ 通常项目中我们是不需要额外书写HRM的accept监听逻辑的，但是如果我们在代码中引入了一些比较偏的文件，比如一些数据文件。这些文件的loader中并没有实现accept()的逻辑，这时候就需要我们实现了。
-+ 本质上HRM都需要实现accept()方法实现独立更新，但是一些第三方插件已经帮我们实现了。这里的话还是需要给大家说一下，有时候一些文件没有实现那么就需要我们去自己实现了。
-+ HRM提供的方法不仅仅是accept()还有很多，比如decline()等等，具体使用的时候可以去文档查询。[module-api](https://webpack.js.org/api/hot-module-replacement/#module-api)
-+ [HRM实现原理](https://www.webpackjs.com/concepts/hot-module-replacement/)
-+ 问题待解决:accept中如果代码出错，控制台并不报错。why？
 
+- 也就是说我们可以通过 module.hot.accept 这个方法覆盖每个模块文件的 HRM 的默认热更新形式从而达到不去影响别的逻辑（交给我们自己处理），比如上边的代码就覆盖了 number.js 改变的时候 HRM 帮我们执行的逻辑。这样就不会对于每次改变都会刷新整个页面逻辑了。
+- 默认不配置 module.hot.accept 的时候每次改变任意文件它就会帮助我们刷新整个页面。
 
+###### 关于 module.hot.accept 的实现
 
+- 其实我们在修改 css 文件的时候发现 css 也是独立模块互不影响的，并不像 js 文件这样全局刷新。引入 CSS 文件的改变理论上我们也应该通过 accept 方法进行监听修改逻辑，这是因为 module.hot.accept 这些逻辑在 css-loader 上底层已经帮我们进行了实现，我们使用 css-loader 的时候就不需要额外实现这段代码了。
+- 在 Vue 中我们在书写代码的时候也是模块之间互不影响的，同理其实是 vue-loader 底层帮我们实现了 module.hot.accept 的逻辑。
+- React 中借助了一些 babel-prest 内置了 module.hot.accept 各个模块之间的实现。
+- 通常项目中我们是不需要额外书写 HRM 的 accept 监听逻辑的，但是如果我们在代码中引入了一些比较偏的文件，比如一些数据文件。这些文件的 loader 中并没有实现 accept()的逻辑，这时候就需要我们实现了。
+- 本质上 HRM 都需要实现 accept()方法实现独立更新，但是一些第三方插件已经帮我们实现了。这里的话还是需要给大家说一下，有时候一些文件没有实现那么就需要我们去自己实现了。
+- HRM 提供的方法不仅仅是 accept()还有很多，比如 decline()等等，具体使用的时候可以去文档查询。[module-api](https://webpack.js.org/api/hot-module-replacement/#module-api)
+- [HRM 实现原理](https://www.webpackjs.com/concepts/hot-module-replacement/)
+- 问题待解决:accept 中如果代码出错，控制台并不报错。why？
+
+---
+
+### Babel 处理 ES6 语法
+
+- babel-loader
+  > 对于 js 语法需要使用 babel-loader 进行处理转译。
+- @babel-core
+  > Babel 核心库，识别 ES6 代码转成 AST，再将 AST 转化成 ES5 语法。
+- @babel/preset-env
+  > 实际上 babel-loader 仅仅是帮助通讯 js 文件和 babel 的桥梁。babel-loader 帮助我们打通了 js 代码和 babel。但是并不会进行转译语法。
+
+> @babel/preset-env 就是 babel 的插件，它帮助我们进行 js 文件的转译。
+> @babel/preset-env 包含了大多数 ES6 语法转化成 ES5 的语法规则，使用之后就可以 js 代码翻译了。
+
+###### 当使用了 babel-loader，安装了@babel-core 核心库后，使用了@babel/preset-env 这个插件，一些语法已经可以帮我们转译了。
+
+###### 但是这样还是不够的，对于一些比如 Promise 或者 map 等方法仍然并没有进行翻译，这是因为 preset-env 中并没有包含所有的语法转发规则。
+
+###### 所以我们需要补充这些 preset-env 没有的语法规则。有两种方式。
+
+1. @babel/polyfill
+   > 安装后在入口文件中引入@babel/polyfill，就可以使用了。polyfill 中存在所有的语法转译规则，引入后 babel 就会根据 polyfill 进行处理新语法了。
+   >
+   > > 这样就会存在一个问题，对于我们的代码中仅仅使用了部分的 ES6+语法。但是 polyfill 会帮助我们引入所有的转译规则这样就会造成打包后的代码体积非常大。
+
+- 当然解决 polyfill 全局引入造成体积大的问题可以通过
+  > 【babel](https://babeljs.io/docs/en/babel-polyfill#docsNav)官网解释说：The polyfill is provided as a convenience but you should use it with @babel/preset-env and the useBuiltIns option so that it doesn't include the whole polyfill which isn't always needed. Otherwise, we would recommend you import the individual polyfills manually.
+  >
+  > > 所以通过 useBuiltIns 结合@babel/preset-env 就可以做到 polyfill 的按需引入减小代码体积。
+
+```
+// main.js
+import "@babel/polyfill";
+// webpack.config.js
+{
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader",
+                options: {
+                    presets: [
+                        ["@babel/preset-env", {
+                            useBuiltIns: 'usage'
+                        }],
+                    ]
+                }
+            },
+// 这样就做了polyfill按需引入
+// 注意presets的配置是数组形式
+```
+
+- 当然 preset-env 不仅仅可以配置 usBuiltIns 还可以配置其他很多属性。
+  1. targets,比如下面的配置就告诉 babel 我的代码要跑在 chrome67 以上的版本，所以结合 preset-env，一些语法如果 chrome67 以上就已经只吃了那么就不需要 polyfill 额外转译，这样也就较少了包的体积。
+
+```
+    {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader",
+                options: {
+                    presets: [
+                        ["@babel/preset-env", {
+                            useBuiltIns: 'usage',
+                            targets:{
+                                chrome:"67"
+                            }
+                        }],
+                    ]
+                }
+            },
+```
+
+2. @babel/plugin-transform-runtime
+   > 对于日常业务代码 babel-polyfill 可能就已经满足需求了，但是 babel-polyfill 会通过全局变量形式注入一些 Promise，mao 等新语法污染环境。在开发一些 UI 库的时候，打包代码的时候这样并不是很好。
+   >
+   > > 所以就引入了@babel/plugin-transform-runtime。
+   > >
+   > > > polyfill 会污染全局形式，但是@babel-plugin-transform-runtime 会以闭包的形式引入，不存在全局污染所以对于类库的编写会更加合适。
+
+```
+npm install --save-dev @babel/plugin-transform-runtime
+npm install --save @babel/runtime
+```
+
+```
+options: {
+    // 不要缺少env基础语法的转译，无论哪种方式都需要env去转译基础语法。
+    presets: [
+                        ["@babel/preset-env"]
+    ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": 2, // 默认是false 需要手动改为2
+        "helpers": true,
+        "regenerator": true,
+        "useESModules": false,
+        "version": "7.0.0-beta.0"
+      }
+    ]
+  ]
+}
+```
+
+- 关于 corejs:2 配置项。
+  1. false 默认用户手动引入特性。
+  2. 2 支持全局变量和静态属性。
+  3. 3 额外支持实例属性。
+  4. 2，3 都要分别额外安装不同的 npm 包。
+     > The plugin defaults to assuming that all polyfillable APIs will be provided by the user. Otherwise the corejs option needs to be specified.
+     >
+     > > 默认 false 表示 transform-runtime 插件认为所以新语法的可以填充的 api 都用用户手动提供，这里配置 2 的意思是说支持全局变量和静态属性，如果需要实例属性需要配置 3，详情可以参照(官网配置)[https://babeljs.io/docs/en/babel-plugin-transform-runtime]。
+     > >
+     > > > 以及修改了 corejs 的配置为 2 后需要额外安装对应的模块，具体还是参照[corejs 配置项手册](https://babeljs.io/docs/en/babel-plugin-transform-runtime)
+
+###### 当然这样在 webpack 中我们去写 babel 的配置那么将会非常的多，我们可以将 babel-loader 的配置放在.babelrc 文件中去进行配置。
+
+**Tips:**
+
+- 日常业务代码使用 polyfill 就可以，对于类库的打包使用 transform-runtime 最佳。
+- 无论是 polyfill 还是 transform-runtime 都是对于 ES6 一些内置模块/属性/方法在 ES5 中进行转译的规则，比如 Promise，proxy,reflect 等等通过 ES5 代码实现让低版本浏览器识别。
+- babel-preset-env 是将 ES6 语法转译成 ES6 的，比如 let，const 等。
+- 所以 polyfill 和 transform-runtime 其实是同一种作用，但是 preset-env 和他们实现的功能是不同的。可以理解为 preset-env 是基础，所以无论 polyfill 还是 transform-runtime 这两种补充内置模块转译的规则，仍然都需要使用 env 去转译基础语法。

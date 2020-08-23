@@ -50,6 +50,11 @@ module.exports = {
                 ]
             },
             {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader"
+            },
+            {
                 test: /\.(scss|css)$/,
                 // css文件通常需要两个loader进行处理
                 use: ["style-loader",

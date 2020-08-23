@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "description": "复习webapck",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "@babel/polyfill": "^7.10.4",
+    "@babel/runtime": "^7.11.2",
+    "@babel/runtime-corejs2": "^7.11.2"
+  },
   "devDependencies": {
+    "@babel/core": "^7.11.4",
+    "@babel/plugin-transform-runtime": "^7.11.0",
     "autoprefixer": "^9.8.6",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^4.2.1",
     "file-loader": "^6.0.0",
@@ -28,6 +35,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "npx webpack --webpack.config.js",
     "start": "webpack-dev-server",
+    "compile-dev": "npx webpack --webpack.config.js --mode=development",
     "middleware": "node server.js"
   },
   "repository": {

@@ -1,0 +1,15 @@
+{
+    "presets": [
+        ["@babel/preset-env"]
+    ],
+    "plugins": [
+        ["@babel/plugin-transform-runtime", {
+            "absoluteRuntime": false,
+            "corejs": 2, // 默认是false 需要手动改为2
+            "helpers": true,
+            "regenerator": true,
+            "useESModules": false,
+            "version": "7.0.0-beta.0"
+        }]
+    ]
+}

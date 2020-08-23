@@ -31,17 +31,27 @@
 //     div.className = 'div'
 //     root.appendChild(div)
 // })
-import count from "./HRM/count"
-import number from "./HRM/number"
+// import count from "./HRM/count"
+// import number from "./HRM/number"
 
 
-count()
-number()
+// count()
+// number()
 
-if (module.hot) {
-    module.hot.accept("./HRM/number", () => {
-        const numberDom = document.getElementById("number")
-        document.body.removeChild(numberDom)
-        number()
-    })
-}
+// if (module.hot) {
+//     module.hot.accept("./HRM/number", () => {
+//         const numberDom = document.getElementById("number")
+//         document.body.removeChild(numberDom)
+//         number()
+//     })
+// }
+
+// import "@babel/polyfill";
+// Babel处理ES6语法
+const arr = [
+    new Promise(() => {}),
+    new Promise(() => {})
+]
+arr.map(i => {
+    return i
+})
