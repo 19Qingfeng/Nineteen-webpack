@@ -425,7 +425,7 @@ if(module.hot) {
    >
    > > 这样就会存在一个问题，对于我们的代码中仅仅使用了部分的 ES6+语法。但是 polyfill 会帮助我们引入所有的转译规则这样就会造成打包后的代码体积非常大。
 
-- 当然解决 polyfill 全局引入造成体积大的问题可以通过 babel-prest-env 的 useBuiltIns 配置，useBuiltIns:"usage"。
+- 当然解决 polyfill 全局引入造成体积大的问题可以通过 babel-preset-env 的 useBuiltIns 配置，useBuiltIns:"usage"。
 
   > [babel](https://babeljs.io/docs/en/babel-polyfill#docsNav)官网解释说：The polyfill is provided as a convenience but you should use it with @babel/preset-env and the useBuiltIns option so that it doesn't include the whole polyfill which isn't always needed. Otherwise, we would recommend you import the individual polyfills manually.
   >
@@ -457,7 +457,8 @@ import "@babel/polyfill";
   1. targets,比如下面的配置就告诉 babel 我的代码要跑在 chrome67 以上的版本，所以结合 preset-env，一些语法如果 chrome67 以上就已经只吃了那么就不需要 polyfill 额外转译，这样也就较少了包的体积。
   2. corejs,为 preset-env 声明 corejs 版本，见官网说明:
      > Since @babel/polyfill was deprecated in 7.4.0, we recommend directly adding core-js and setting the version via the corejs option.
-
+     > 使用@babel/prest-env配合babel-polyfill的按需引入，也就是useBuiltIns选项时候，要求显示指明corejs版本，否则默认为2.x并且打包时候提示warming。
+     > 以及使用corejs，不要忘记按照，corejs配置区别见下方transfrom-runtime。
 ```
     {
                 test: /\.js$/,
@@ -467,6 +468,7 @@ import "@babel/polyfill";
                     presets: [
                         ["@babel/preset-env", {
                             useBuiltIns: 'usage',
+                            corejs:"3",
                             targets:{
                                 chrome:"67"
                             }
@@ -477,7 +479,7 @@ import "@babel/polyfill";
 ```
 
 2. @babel/plugin-transform-runtime
-   > 对于日常业务代码 babel-polyfill 可能就已经满足需求了，但是 babel-polyfill 会通过全局变量形式注入一些 Promise，mao 等新语法污染环境。在开发一些 UI 库的时候，打包代码的时候这样并不是很好。
+   > 对于日常业务代码 babel-polyfill 可能就已经满足需求了，但是 babel-polyfill 会通过全局变量形式注入一些 Promise，map 等新语法污染环境。在开发一些 UI 库的时候，打包代码的时候这样并不是很好。
    >
    > > 所以就引入了@babel/plugin-transform-runtime。
    > >
@@ -513,7 +515,7 @@ options: {
 - 关于 corejs:2 配置项。
   1. false 默认用户手动引入特性。
   2. 2 支持全局变量和静态属性。
-  3. 3 额外支持实例属性。
+  3. 3 不仅支持全局变量和静态属性，还额外支持实例属性。
   4. 2，3 都要分别额外安装不同的 npm 包。
      > The plugin defaults to assuming that all polyfillable APIs will be provided by the user. Otherwise the corejs option needs to be specified.
      >
@@ -528,7 +530,7 @@ options: {
 - 日常业务代码使用 polyfill 就可以，对于类库的打包使用 transform-runtime 最佳。
 - 无论是 polyfill 还是 transform-runtime 都是对于 ES6 一些内置模块/属性/方法在 ES5 中进行转译的规则，比如 Promise，proxy,reflect 等等通过 ES5 代码实现让低版本浏览器识别。
 - babel-preset-env 是将 ES6 语法转译成 ES6 的，比如 let，const 等。
-- 所以 polyfill 和 transform-runtime 其实是同一种作用，但是 preset-env 和他们实现的功能是不同的。可以理解为 preset-env 是基础，所以无论 polyfill 还是 transform-runtime 这两种补充内置模块转译的规则，仍然都需要使用 env 去转译基础语法。
+- 所以 polyfill 和 transform-runtime 其实是同一种作用，但是 preset-env 和他们实现的功能是不同的。可以理解为 preset-env 是基础，所以无论 polyfill 还是 transform-runtime 这两种补充内置模块转译的规则（比如ES6内置的Promise），仍然都需要使用 env 去转译基础语法。
 
 ### Vue 和 React
 
