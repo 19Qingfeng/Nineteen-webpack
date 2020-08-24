@@ -114,7 +114,7 @@ import style from "src/index.scss"
 
 - file-loader 帮助 webapck 识别 ttf,eot,woff 等格式的字体文件处理。
 - file-loader 配置和 url-loader 类似，其实 fileloader 也可以处理图片文件，只不过 url-loader 存在 limit 配置可以转成 base64.
-- file-loader其实可以处理的文件类型有很多做，简单来说他的作用就是将这些匹配文件打包后放在output中去。
+- file-loader 其实可以处理的文件类型有很多做，简单来说他的作用就是将这些匹配文件打包后放在 output 中去。
 
 ### Plugin
 
@@ -426,9 +426,12 @@ if(module.hot) {
    > > 这样就会存在一个问题，对于我们的代码中仅仅使用了部分的 ES6+语法。但是 polyfill 会帮助我们引入所有的转译规则这样就会造成打包后的代码体积非常大。
 
 - 当然解决 polyfill 全局引入造成体积大的问题可以通过
-  > 【babel](https://babeljs.io/docs/en/babel-polyfill#docsNav)官网解释说：The polyfill is provided as a convenience but you should use it with @babel/preset-env and the useBuiltIns option so that it doesn't include the whole polyfill which isn't always needed. Otherwise, we would recommend you import the individual polyfills manually.
+
+  > [babel](https://babeljs.io/docs/en/babel-polyfill#docsNav)官网解释说：The polyfill is provided as a convenience but you should use it with @babel/preset-env and the useBuiltIns option so that it doesn't include the whole polyfill which isn't always needed. Otherwise, we would recommend you import the individual polyfills manually.
   >
   > > 所以通过 useBuiltIns 结合@babel/preset-env 就可以做到 polyfill 的按需引入减小代码体积。
+
+  > 其实如果使用了 useBuiltIns 配置了 polyfill 的按需引入，比如 usage 之后就可以不用额外自己引入 babel-polyfill 了，它会帮我们自动引入的。
 
 ```
 // main.js
@@ -554,3 +557,89 @@ options: {
 ###### 至此，webpack 基本内容结束。
 
 ---
+
+## Webpack 高级概念
+
+### TreeShaking
+
+> TreeShaking 的意思是说 webpack 对于一些 ES Module 引入方式，打包后删除模块中并没有被项目引入到的代码。也就是引入什么打包什么，按需加载。
+>
+> > 注意：TreeShaking 仅仅对于 ES Module 生效。
+
+- Tree Shaking 只支持 ES Module 方式的引入，因为 ES Module 是静态引入。
+  > import 底层是静态引入，require commonjs 这种是动态引入。TreeShaking 仅支持静态引入。
+- Tree Shaking 在 production 下默认会开启。
+- Tree Shaking 在 devlopment 下其实没有必要配置，但是我们为了演示去配置开发环境：
+
+```
+// 开发环境下配置
+// webpack.config.js
+module.exports = {
+  ...
+  optimization:{
+    // 开启TreeShaking
+    usedExports:true
+  }
+}
+
+// package.json
+sideEffects:false
+// 它表示的是如果配置了Tree Shaking那么webpack只要打包一个模块就会使用TreeShaking去处理
+// sideEffects配置项是表示让TreeShaking对于匹配文件进行忽略，也就是对应模块不使用TreeShaking
+// false表示全部开启TreeShaking
+```
+
+- Tips:
+  > 对于一些没有导出的模块，比如 css 文件或者引入的 babel-polyfill 等
+
+```
+import "./index.css"
+import "@babel/polyfill"
+```
+
+> 这些文件并没有导出使用，比如 polyfill 而是在全局添加一些变量，css 文件也没有导出任何但是我们仍然要使用。
+
+> 这个时候就不能让 Tree Shaking 对于这些代码进行处理，那么就要进行配置 sideEffects 了。
+
+```
+sideEffects:[
+  "@babel/polyfill",
+  "*.css"
+]
+```
+
+- 这时候再去打包的话就会发现在 development 环境下会多了两行注释(参考 Demo):
+
+```
+/* unused harmony export sum */
+/* unused harmony export dele */
+      var sum = function sum(a, b) {
+        console.log(a + b);
+      };
+      var dele = function dele(a, b) {
+        console.log(a - b);
+      };
+
+```
+
+> 为什么没有删除呢？我明明配置了 TreeShaking。
+
+> 这是因为在 development 模式下，其实并不需要配置 treeShaking。即便是我们进行了配置，webpack 也并不会在 dev 下真正的删除，仅仅会用注释标记哪些会被删除哪些有用。
+>
+> > 这么处理的原因是在 dev 环境下生成的代码一般都是需要做调试的，如果 TreeShaking 在 dev 下删除了没有引入的代码，那么就会造成 sourceMap 对应行数映射之类都会错了。
+
+- 但是在 production 模式下，TreeShaking 会自动生效的。
+
+- 需要注意的是 production 模式下，package.json 的 sideEffects 一定不要忘记配置。否则就会忽略一些文件从而产生错误。
+
+* 关于 TreeShaking 需要注意的点。
+
+  1. webpack 默认如果不在 package.json 中进行配置 sideEffects 那么它仅仅对于 js 类库模块的导出会做 TreeShaking，并不会对于 CSS 文件处理 TreeShaking。
+
+  2. 如果设置 sideEffects:false，那么就会对所有文件 TreeShaking，就会处理 CSS 文件了（忽略）。
+
+  3. 如果对于类库进行了配置 sideEffects，那么一定不要忘记加上\*.css 配置，否则就会忽略 css 文件。
+
+     > 总而言之，默认如果不进行配置 sideEffects 的话那么 TreeShaking 并不会对 css 生效，但是一旦进行了配置，那么不想让 TreeShaking 的模块一定要在 sideEffects 中进行处理。
+
+> 总之配置 TreeShaking 的话，生产环境默认开启。sideEffects 我们手动配置上就好了。

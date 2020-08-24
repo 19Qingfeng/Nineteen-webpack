@@ -5,7 +5,6 @@ const {
 } = require('clean-webpack-plugin')
 
 module.exports = {
-    mode: "production",
     entry: {
         main: path.resolve(__dirname, "./src/main.js")
     },
@@ -75,6 +74,10 @@ module.exports = {
 
         ]
     },
+    // 配置dev的Tree Shaking 进行测试
+    // optimization: {
+    //     usedExports: true
+    // },
     // 配置plugin
     plugins: [
         new htmlWebpackPlugin({
@@ -86,7 +89,7 @@ module.exports = {
     ],
     output: {
         filename: "index.js",
-        publicPath: "/",
+        // publicPath: "/",
         // 相对于当前(webpack.config.js)的dist文件夹下
         path: path.resolve(__dirname, "dist/")
     }

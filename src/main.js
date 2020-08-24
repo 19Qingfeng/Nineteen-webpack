@@ -48,10 +48,16 @@
 
 // import "@babel/polyfill";
 // Babel处理ES6语法
-const arr = [
-    new Promise(() => {}),
-    new Promise(() => {})
-]
-arr.map(i => {
-    return i
-})
+// const arr = [
+//     new Promise(() => {}),
+//     new Promise(() => {})
+// ]
+// arr.map(i => {
+//     return i
+// })
+import "./index.css"
+import {
+    sum
+} from "./treeShaking/index.js"
+
+console.log(sum(3, 5))
