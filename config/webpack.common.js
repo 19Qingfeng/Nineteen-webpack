@@ -6,17 +6,7 @@ const {
 
 module.exports = {
     entry: {
-        main: path.resolve(__dirname, "./src/main.js")
-    },
-    devtool: "inline-source-map",
-    devServer: {
-        index: "wanghaoyu.html",
-        open: true,
-        contentBase: path.resolve(__dirname, "./distaaasdfa"),
-        port: 9000,
-        hot: true,
-        // 如果hot没有起作用 配置hotonly:true，hot不生效也也不会刷新页面
-        hotOnly: true
+        main: path.resolve(__dirname, "../src/main.js")
     },
     // 配置loader
     module: {
@@ -74,14 +64,10 @@ module.exports = {
 
         ]
     },
-    // 配置dev的Tree Shaking 进行测试
-    // optimization: {
-    //     usedExports: true
-    // },
     // 配置plugin
     plugins: [
         new htmlWebpackPlugin({
-            template: path.resolve(__dirname, "./public/index.html"),
+            template: path.resolve(__dirname, "../public/index.html"),
             title: "19-webpack",
             filename: "wanghaoyu.html"
         }),
@@ -91,6 +77,6 @@ module.exports = {
         filename: "index.js",
         // publicPath: "/",
         // 相对于当前(webpack.config.js)的dist文件夹下
-        path: path.resolve(__dirname, "dist/")
+        path: path.resolve(__dirname, "../dist/")
     }
 }

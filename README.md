@@ -425,7 +425,7 @@ if(module.hot) {
    >
    > > 这样就会存在一个问题，对于我们的代码中仅仅使用了部分的 ES6+语法。但是 polyfill 会帮助我们引入所有的转译规则这样就会造成打包后的代码体积非常大。
 
-- 当然解决 polyfill 全局引入造成体积大的问题可以通过
+- 当然解决 polyfill 全局引入造成体积大的问题可以通过 babel-prest-env 的 useBuiltIns 配置，useBuiltIns:"usage"。
 
   > [babel](https://babeljs.io/docs/en/babel-polyfill#docsNav)官网解释说：The polyfill is provided as a convenience but you should use it with @babel/preset-env and the useBuiltIns option so that it doesn't include the whole polyfill which isn't always needed. Otherwise, we would recommend you import the individual polyfills manually.
   >
@@ -455,6 +455,8 @@ import "@babel/polyfill";
 
 - 当然 preset-env 不仅仅可以配置 usBuiltIns 还可以配置其他很多属性。
   1. targets,比如下面的配置就告诉 babel 我的代码要跑在 chrome67 以上的版本，所以结合 preset-env，一些语法如果 chrome67 以上就已经只吃了那么就不需要 polyfill 额外转译，这样也就较少了包的体积。
+  2. corejs,为 preset-env 声明 corejs 版本，见官网说明:
+     > Since @babel/polyfill was deprecated in 7.4.0, we recommend directly adding core-js and setting the version via the corejs option.
 
 ```
     {
@@ -604,6 +606,10 @@ import "@babel/polyfill"
 ```
 sideEffects:[
   "@babel/polyfill",
+  "**/*.css",
+  "**/*.scss",
+  "./esnext/index.js",
+  "./esnext/configure.js",
   "*.css"
 ]
 ```
@@ -642,4 +648,26 @@ sideEffects:[
 
      > 总而言之，默认如果不进行配置 sideEffects 的话那么 TreeShaking 并不会对 css 生效，但是一旦进行了配置，那么不想让 TreeShaking 的模块一定要在 sideEffects 中进行处理。
 
-> 总之配置 TreeShaking 的话，生产环境默认开启。sideEffects 我们手动配置上就好了。
+> TreeShaking 概念，打包时候引入模块仅仅引入使用到的代码。仅仅支持 ES Modules 静态引入。
+
+> 总之配置 TreeShaking 的话，生产环境默认开启。无论如何在 packagege.json 中 sideEffects 我们手动配置上就不会有意外了
+
+### Production 和 Development 模式区别
+
+> 区别不做过多解释了，日常开发大家都清楚。
+
+> 这里主要使用 webpack-merge 进行合并。
+
+```
+npm install webpack-merge -D
+
+const { merge } = require("webpack-merge")
+// webpack.dev.js
+const common = require("./webpack.common.js")
+const devConfig = { ... }
+module.exports = merge(common,devConfig)
+// webpack.prod.js
+const common = require("./webpack.common.js")
+const prodConfig - { ... }
+module.exports = merge(common,prodConfig)
+```

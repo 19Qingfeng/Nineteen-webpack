@@ -1,55 +1,59 @@
 {
-    "name": "19-webpack",
-    "version": "1.0.0",
-    "description": "复习webapck",
-    "main": "index.js",
-    "dependencies": {
-        "@babel/polyfill": "^7.10.4",
-        "@babel/runtime": "^7.11.2",
-        "@babel/runtime-corejs2": "^7.11.2"
-    },
-    "sideEffects": ["*.css"],
-    "devDependencies": {
-        "@babel/core": "^7.11.4",
-        "@babel/plugin-transform-runtime": "^7.11.0",
-        "autoprefixer": "^9.8.6",
-        "babel-loader": "^8.1.0",
-        "clean-webpack-plugin": "^3.0.0",
-        "css-loader": "^4.2.1",
-        "file-loader": "^6.0.0",
-        "html-webpack-plugin": "^4.3.0",
-        "node-sass": "^4.14.1",
-        "postcss-loader": "^3.0.0",
-        "sass-loader": "^9.0.3",
-        "style-loader": "^1.2.1",
-        "url-loader": "^4.1.0",
-        "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12",
-        "webpack-dev-middleware": "^3.7.2",
-        "webpack-dev-server": "^3.11.0"
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions"
-    ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "compile": "webpack --webpack.config.js --mode production",
-        "start": "webpack-dev-server",
-        "compile-dev": "npx webpack --webpack.config.js --mode=development",
-        "middleware": "node server.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/19Qingfeng/19-webpack.git"
-    },
-    "keywords": [
-        "situation123."
-    ],
-    "author": "wang.haoyu",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/19Qingfeng/19-webpack/issues"
-    },
-    "homepage": "https://github.com/19Qingfeng/19-webpack#readme"
+  "name": "19-webpack",
+  "version": "1.0.0",
+  "description": "复习webapck",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/polyfill": "^7.10.4",
+    "@babel/runtime": "^7.11.2",
+    "@babel/runtime-corejs2": "^7.11.2"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.11.4",
+    "@babel/plugin-transform-runtime": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "autoprefixer": "^9.8.6",
+    "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^4.2.1",
+    "file-loader": "^6.0.0",
+    "html-webpack-plugin": "^4.3.0",
+    "node-sass": "^4.14.1",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^9.0.3",
+    "style-loader": "^1.2.1",
+    "url-loader": "^4.1.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.1.2"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "webpack --config config/webpack.prod.js --mode production",
+    "start": "webpack-dev-server --config config/webpack.dev.js",
+    "compile-dev": "npx webpack --webpack.config.js --mode=development",
+    "middleware": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/19Qingfeng/19-webpack.git"
+  },
+  "keywords": [
+    "situation123."
+  ],
+  "author": "wang.haoyu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/19Qingfeng/19-webpack/issues"
+  },
+  "homepage": "https://github.com/19Qingfeng/19-webpack#readme"
 }
