@@ -55,9 +55,25 @@
 // arr.map(i => {
 //     return i
 // })
-import "./index.css"
-import {
-    sum
-} from "./treeShaking/index.js"
+// import "./index.css"
+// import {
+//     sum
+// } from "./treeShaking/index.js"
 
-console.log(sum(3, 5))
+// 异步代码会自动分割
+function importLoadsh() {
+    return import ("lodash").then(({
+        default: _
+    }) => {
+        let ele = document.createElement("div")
+        ele.innerHTML = 'wang.haoyu'
+        return ele
+    })
+}
+importLoadsh().then((ele) => {
+    document.body.appendChild(ele)
+})
+
+// const loadshJoin = _.join([4, 5, 6], "**")
+// console.log(loadshJoin)
+// console.log(sum(3, 5))

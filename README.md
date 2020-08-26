@@ -673,3 +673,63 @@ const common = require("./webpack.common.js")
 const prodConfig - { ... }
 module.exports = merge(common,prodConfig)
 ```
+
+### Code Splitting
+> 其实Code Splitting并不是webpack中的概念，在没有webpack之前就已经存在Code Splitting了。
+> 只不过是Webpack帮我们更方便的进行Code Splitting。
++ webpack中二种代码分割方式。
+  
+  1. 通过entry手动进行代码分割。
+
+  2. 通过SplitChunksPlugin进行代码分割进行重复数据删除和拆分。(Webpack4+这个插件已经不需要额外引入了，集成在了optimization中的splitChunks)
+
+  3. 动态引入。（异步引入的代码会被自动分割）
+
+1. 传统方式的手动代码分割：使用entry分割。
+```
+// 比如我们代码中引入了lodash
+// lodash.js
+import _ from "lodash"
+// window手动挂载提供其他页面使用
+// 单独手动拆分lodash成一个文件在入口配置中进行单独打包
+window._ = _
+```
+```
+// 业务逻辑代码
+...
+```
+```
+// 配置文件 通过多入口进行CodeSplitting
+// 注意打包的顺序 entry配置入口文件顺序
+// 比如这里我们先引入了lodash在挂载在window上然后main才使用
+// 否则先打包main就会报错的，main先打包的话并没有挂载lodash呢也就无法使用
+...
+entry: {
+  lodash:path.resolve(__dirname,"../src/lodash.js"),
+  main:path.resolve(__diranme,'../src/main.js'),
+}
+```
+
+> 这样就拆分出来的lodash和main代码，这是传统方式的手动Code Splitting。
+
+2. optimization - splitChunks
++ 同步代码分割
+```
+// 对于同步引入代码也会进行了分割
+optimization: {
+        splitChunks: {
+            chunks: "all"
+        }
+    },
+```
++ 异步代码分割(异步引入代码一定会进行分割，无论是否匹配到splitChunks的条件)
+```
+// 并没有配置optimization中的splitChunks
+
+```
+
+> 其实这就是webpack中的Code Splitting。
+###### Tips:
++ Webpack在做同步代码引入的时候，会根据optimization中的splitChunks配置。满足条件进行代码分割。
++ Webpack对于异步代码的引入方式，是一定会将异步引入的代码分割的。
+> 因为异步引入的话只有需要的时候才会引入，所以是会自动分割出来的。需要的时候才会进行加载。

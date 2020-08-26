@@ -6,7 +6,7 @@ const {
 
 module.exports = {
     entry: {
-        main: path.resolve(__dirname, "../src/main.js")
+        main: path.resolve(__dirname, "../src/main.js"),
     },
     // 配置loader
     module: {
@@ -74,7 +74,7 @@ module.exports = {
         new CleanWebpackPlugin(),
     ],
     output: {
-        filename: "index.js",
+        filename: "[name].js",
         // publicPath: "/",
         // 相对于当前(webpack.config.js)的dist文件夹下
         path: path.resolve(__dirname, "../dist/")
