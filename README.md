@@ -733,3 +733,145 @@ optimization: {
 + Webpack在做同步代码引入的时候，会根据optimization中的splitChunks配置。满足条件进行代码分割。
 + Webpack对于异步代码的引入方式，是一定会将异步引入的代码分割的。
 > 因为异步引入的话只有需要的时候才会引入，所以是会自动分割出来的。需要的时候才会进行加载。
+
+### SplitChunks
+> 进一步带大家来了解SplitChunksPlugin，optimization中的splitChunks底层就是这个插件。
+
+#### 首先说一下异步代码的魔法注释[Magic Comments](https://webpack.js.org/api/module-methods/#magic-comments)
+
++ webpackIgnore：设置为时，禁用动态导入解析true。表示异步代码并不进行Code Splitting。
+
++ webpackChunkName：新块的名称。异步组件代码分割命名。
+
++ webpackPrefetch/webpackPreload之后会专门讲。
+
++ webpackMode：自webpack 2.6.0起，可以指定用于解决动态导入的不同模式。选项去查官网吧，有lazy模式。
+
+```
+// Single target
+import(
+  /* webpackChunkName: "my-chunk-name" */
+  /* webpackMode: "lazy" */
+  /* webpackExports: ["default", "named"] */
+  'module'
+);
+
+// Multiple possible targets
+import(
+  /* webpackInclude: /\.json$/ */
+  /* webpackExclude: /\.noimport\.json$/ */
+  /* webpackChunkName: "my-chunk-name" */
+  /* webpackMode: "lazy" */
+  /* webpackPrefetch: true */
+  /* webpackPreload: true */
+  `./locale/${language}`
+);
+```
+
+#### SplitChunks配置
+
+**首先放结论:关于同步和异步代码分割**
++ 如果配置splitChunks中的chunks为all。
+
+  + 如果通过同步代码引入，进入splitChunks配置。满足-分割，不满足-不分割。
+  
+  + 如果异步代码引入，同样会进入splitChunks配置。满足-匹配进入分组,不满足-不进入分组(还是会分割，只不过完全按照Magic Comments的配置)。除非设置webpackIgnore:false才会不分割异步代码。
+
++ 如果配置为initial
+  
+  + 同步代码，同样逻辑。
+
+  + 异步代码，不会进入optimization中的splitChunks配置，会按照自己的魔法注释分割。
+  
++ 如果配置为async
+
+  + 同步代码不进入。
+
+  + 异步代码进入配置匹配项，匹配-进入分组cacheGroup，不匹配按照自己魔法注释分割。
+
+*splitChunks如果没有配置，存在默认配置项:*
+```
+module.exports = {
+  //...
+  optimization: {
+    splitChunks: {
+      // initial（同步），all（所有），async(同步)
+      chunks: 'all',
+      // 生成块的最小字节大小，当包小于minSize规定的字节大小时不进行代码分割配置(注意区分同步异步)
+      minSize: 20000,
+      // 通过确保拆分后剩余的最小块大小超过限制来避免大小为零的模块。(我的理解是确保拆分后最小的模块大小)
+      minRemainingSize: 0,
+      // 不常用，他的值是将打包分割后的库尝试进行二次拆分，尝试将打包后的代码按照maxSize的大小进行拆分成多个文件。
+      maxSize: 0,
+      // 当一个模块至少被使用次数达到要求之后才会进行分割
+      minChunks: 1,
+      // 按需加载时并行请求的最大数量，也就是同时加载模块数。
+      maxAsyncRequests: 30,
+      // 入口点上并行请求的最大数量，
+      // 也就是网站入口文件中通过代码分割进行最多的分割数
+      maxInitialRequests: 30,
+      // 默认情况下，webpack将使用块的来源和名称生成名称（例如vendors~main.js）。此选项使您可以指定用于生成名称的定界符。
+      // 也就是匹配满足splitChunks条件的时候会进入对应的cacheGroup生成文件名为：
+      // cache组名~文件名 文件生成时候的链接符 （vendors~main.js中的~）
+      automaticNameDelimiter: '~',
+      // 强制执行拆分的大小阈值和其他限制（minRemainingSize，maxAsyncRequests，maxInitialRequests）将被忽略。
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    }
+  }
+};
+```
++ cacheGroups拿出来单独说。
+> 缓存组可以继承和/或覆盖splitChunks.*;中的任何选项。他可以配置任何splitChunks中的配置进行覆盖，但是她也拥有一些自己的配置
+> splitChunks条件会进入cacheGroup中的按照组条件进行Code Splitting。
+  + priority:一个模块可以属于多个缓存组。优化将优先选择具有较高的缓存组priority。默认组的优先级为负，以允许自定义组获得更高的优先级（默认值适用0于自定义组）。
+
+  + reuseExistingChunk:如果当前块包含已经从主包中分离出来的模块，那么它将被重用，而不是生成一个新的模块。这可能会影响块的文件名。（举例a，b两个第三方库，一个页面中引入a，b。但a中又使用了b模块，在打包a的时候符合要求会打包，正常来说在打包a的时候因为a引入了b。所以b也会进入分割和a同一个组中。reuseExistingChunk：true他会发现之前已经引入过b.js，所以在a中引入b的时候他会直接去复用之前的代码。）
+
+  + test:控制此缓存组选择的模块。省略它会选择所有模块。它可以匹配绝对模块资源路径或块名称。匹配块名称时，将选择块中的所有模块。
+
+  +  default:默认组名（当以上都不存在时进入default，前提是满足splitChunks外置匹配条件进入组匹配后）。
+
+  + filename,配置filename后该cacheGroup生成的文件不在被称作组名+文件名了，而是直接被叫做filename。这可以在我们进行第三方库打包时候进行配置，比如elementui匹配的cachegroup那么生成的就叫做elementui.js。
+
+  + 其他用到了查官网吧。
+```
+cacheGroups: {
+          // cacheGroups当打包同步代码的时候，上边的参数会有效同时会继续往下根据
+          // cacheGroups决定分割的代码放在哪个组中。
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          // 可以在不同的grouops中添加filename
+          // 如果不添加名称就为组名+名称
+          // 添加之后单纯就是 filename 不推荐这样全局设置
+          // filename:"[name].vendors.js"
+          priority: -10
+        },
+        svgGroup: {
+          test(module, chunks) {
+            // `module.resource` contains the absolute path of the file on disk.
+            // Note the usage of `path.sep` instead of / or \, for cross-platform compatibility.
+            const path = require('path');
+            return module.resource &&
+                 module.resource.endsWith('.svg') &&
+                 module.resource.includes(`${path.sep}cacheable_svgs${path.sep}`);
+          }
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+}
+```

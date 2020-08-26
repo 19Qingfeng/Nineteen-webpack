@@ -61,8 +61,10 @@
 // } from "./treeShaking/index.js"
 
 // 异步代码会自动分割
+import axios from "axios"
+
 function importLoadsh() {
-    return import ("lodash").then(({
+    return import ( /* webpackChunkName:"lodash" */ "lodash").then(({
         default: _
     }) => {
         let ele = document.createElement("div")

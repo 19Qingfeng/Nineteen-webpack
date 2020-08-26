@@ -3,7 +3,7 @@
 /******/ 	function webpackJsonpCallback(data) {
 /******/ 		var chunkIds = data[0];
 /******/ 		var moreModules = data[1];
-/******/
+/******/ 		var executeModules = data[2];
 /******/
 /******/ 		// add "moreModules" to the modules object,
 /******/ 		// then flag all "chunkIds" as loaded and fire callback
@@ -26,8 +26,29 @@
 /******/ 			resolves.shift()();
 /******/ 		}
 /******/
-/******/ 	};
+/******/ 		// add entry modules from loaded chunk to deferred list
+/******/ 		deferredModules.push.apply(deferredModules, executeModules || []);
 /******/
+/******/ 		// run deferred modules when all chunks ready
+/******/ 		return checkDeferredModules();
+/******/ 	};
+/******/ 	function checkDeferredModules() {
+/******/ 		var result;
+/******/ 		for(var i = 0; i < deferredModules.length; i++) {
+/******/ 			var deferredModule = deferredModules[i];
+/******/ 			var fulfilled = true;
+/******/ 			for(var j = 1; j < deferredModule.length; j++) {
+/******/ 				var depId = deferredModule[j];
+/******/ 				if(installedChunks[depId] !== 0) fulfilled = false;
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferredModules.splice(i--, 1);
+/******/ 				result = __webpack_require__(__webpack_require__.s = deferredModule[0]);
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		return result;
+/******/ 	}
 /******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -39,11 +60,11 @@
 /******/ 		"main": 0
 /******/ 	};
 /******/
-/******/
+/******/ 	var deferredModules = [];
 /******/
 /******/ 	// script path function
 /******/ 	function jsonpScriptSrc(chunkId) {
-/******/ 		return __webpack_require__.p + "" + ({}[chunkId]||chunkId) + ".js"
+/******/ 		return __webpack_require__.p + "" + ({"lodash":"lodash"}[chunkId]||chunkId) + ".js"
 /******/ 	}
 /******/
 /******/ 	// The require function
@@ -195,8 +216,10 @@
 /******/ 	var parentJsonpFunction = oldJsonpFunction;
 /******/
 /******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/main.js");
+/******/ 	// add entry module to deferred list
+/******/ 	deferredModules.push(["./src/main.js","vendors~main"]);
+/******/ 	// run deferred modules when ready
+/******/ 	return checkDeferredModules();
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -205,11 +228,12 @@
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! no static exports found */
+/*! no exports provided */
 /*! all exports used */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("// import testImg from \"./test-img.jpeg\"\n// import style from \"./index.modules.suss\";\n// // import \"./index.scss\"\n// import \"./font/iconfont.css\"\n// console.log(style, 'style5')\n// const img = new Image();\n// img.src = testImg;\n// img.classList.add(style.root.image)\n// let root = document.getElementById('root')\n// root.appendChild(img)\n// const div = document.createElement(\"div\")\n// div.id = 'icon'\n// div.className = \"iconshuaxinzhongjieban iconfont\"\n// root.appendChild(div)\n// 使用sourceMap\n// 故意写错 devTool:\"none\" 没有映射关系\n// // console.log(\"hello world1111\")\n// import \"./index.css\"\n// const root = document.getElementById(\"root\")\n// const btn = document.createElement(\"button\")\n// btn.innerText = \"点击我\"\n// root.appendChild(btn)\n// console.log(\"add\")\n// btn.addEventListener('click', () => {\n//     const div = document.createElement('div')\n//     div.innerText = '创建的div'\n//     div.className = 'div'\n//     root.appendChild(div)\n// })\n// import count from \"./HRM/count\"\n// import number from \"./HRM/number\"\n// count()\n// number()\n// if (module.hot) {\n//     module.hot.accept(\"./HRM/number\", () => {\n//         const numberDom = document.getElementById(\"number\")\n//         document.body.removeChild(numberDom)\n//         number()\n//     })\n// }\n// import \"@babel/polyfill\";\n// Babel处理ES6语法\n// const arr = [\n//     new Promise(() => {}),\n//     new Promise(() => {})\n// ]\n// arr.map(i => {\n//     return i\n// })\n// import \"./index.css\"\n// import {\n//     sum\n// } from \"./treeShaking/index.js\"\nfunction importLoadsh() {\n  return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.t.bind(null, /*! lodash */ \"./node_modules/_lodash@4.17.20@lodash/lodash.js\", 7)).then(function (_ref) {\n    var _ = _ref.default;\n    var ele = document.createElement(\"div\");\n    ele.innerHTML = 'wang.haoyu';\n    return ele;\n  });\n}\n\nimportLoadsh().then(function (ele) {\n  document.body.appendChild(ele);\n}); // const loadshJoin = _.join([4, 5, 6], \"**\")\n// console.log(loadshJoin)\n// console.log(sum(3, 5))//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvbWFpbi5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy9tYWluLmpzPzU2ZDciXSwic291cmNlc0NvbnRlbnQiOlsiLy8gaW1wb3J0IHRlc3RJbWcgZnJvbSBcIi4vdGVzdC1pbWcuanBlZ1wiXG4vLyBpbXBvcnQgc3R5bGUgZnJvbSBcIi4vaW5kZXgubW9kdWxlcy5zdXNzXCI7XG4vLyAvLyBpbXBvcnQgXCIuL2luZGV4LnNjc3NcIlxuLy8gaW1wb3J0IFwiLi9mb250L2ljb25mb250LmNzc1wiXG5cblxuLy8gY29uc29sZS5sb2coc3R5bGUsICdzdHlsZTUnKVxuLy8gY29uc3QgaW1nID0gbmV3IEltYWdlKCk7XG4vLyBpbWcuc3JjID0gdGVzdEltZztcbi8vIGltZy5jbGFzc0xpc3QuYWRkKHN0eWxlLnJvb3QuaW1hZ2UpXG4vLyBsZXQgcm9vdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290Jylcbi8vIHJvb3QuYXBwZW5kQ2hpbGQoaW1nKVxuXG4vLyBjb25zdCBkaXYgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4vLyBkaXYuaWQgPSAnaWNvbidcbi8vIGRpdi5jbGFzc05hbWUgPSBcImljb25zaHVheGluemhvbmdqaWViYW4gaWNvbmZvbnRcIlxuLy8gcm9vdC5hcHBlbmRDaGlsZChkaXYpXG5cbi8vIOS9v+eUqHNvdXJjZU1hcFxuLy8g5pWF5oSP5YaZ6ZSZIGRldlRvb2w6XCJub25lXCIg5rKh5pyJ5pig5bCE5YWz57O7XG4vLyAvLyBjb25zb2xlLmxvZyhcImhlbGxvIHdvcmxkMTExMVwiKVxuLy8gaW1wb3J0IFwiLi9pbmRleC5jc3NcIlxuLy8gY29uc3Qgcm9vdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwicm9vdFwiKVxuLy8gY29uc3QgYnRuID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImJ1dHRvblwiKVxuLy8gYnRuLmlubmVyVGV4dCA9IFwi54K55Ye75oiRXCJcbi8vIHJvb3QuYXBwZW5kQ2hpbGQoYnRuKVxuLy8gY29uc29sZS5sb2coXCJhZGRcIilcbi8vIGJ0bi5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+IHtcbi8vICAgICBjb25zdCBkaXYgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKVxuLy8gICAgIGRpdi5pbm5lclRleHQgPSAn5Yib5bu655qEZGl2J1xuLy8gICAgIGRpdi5jbGFzc05hbWUgPSAnZGl2J1xuLy8gICAgIHJvb3QuYXBwZW5kQ2hpbGQoZGl2KVxuLy8gfSlcbi8vIGltcG9ydCBjb3VudCBmcm9tIFwiLi9IUk0vY291bnRcIlxuLy8gaW1wb3J0IG51bWJlciBmcm9tIFwiLi9IUk0vbnVtYmVyXCJcblxuXG4vLyBjb3VudCgpXG4vLyBudW1iZXIoKVxuXG4vLyBpZiAobW9kdWxlLmhvdCkge1xuLy8gICAgIG1vZHVsZS5ob3QuYWNjZXB0KFwiLi9IUk0vbnVtYmVyXCIsICgpID0+IHtcbi8vICAgICAgICAgY29uc3QgbnVtYmVyRG9tID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJudW1iZXJcIilcbi8vICAgICAgICAgZG9jdW1lbnQuYm9keS5yZW1vdmVDaGlsZChudW1iZXJEb20pXG4vLyAgICAgICAgIG51bWJlcigpXG4vLyAgICAgfSlcbi8vIH1cblxuLy8gaW1wb3J0IFwiQGJhYmVsL3BvbHlmaWxsXCI7XG4vLyBCYWJlbOWkhOeQhkVTNuivreazlVxuLy8gY29uc3QgYXJyID0gW1xuLy8gICAgIG5ldyBQcm9taXNlKCgpID0+IHt9KSxcbi8vICAgICBuZXcgUHJvbWlzZSgoKSA9PiB7fSlcbi8vIF1cbi8vIGFyci5tYXAoaSA9PiB7XG4vLyAgICAgcmV0dXJuIGlcbi8vIH0pXG4vLyBpbXBvcnQgXCIuL2luZGV4LmNzc1wiXG4vLyBpbXBvcnQge1xuLy8gICAgIHN1bVxuLy8gfSBmcm9tIFwiLi90cmVlU2hha2luZy9pbmRleC5qc1wiXG5cblxuZnVuY3Rpb24gaW1wb3J0TG9hZHNoKCkge1xuICAgIHJldHVybiBpbXBvcnQgKFwibG9kYXNoXCIpLnRoZW4oKHtcbiAgICAgICAgZGVmYXVsdDogX1xuICAgIH0pID0+IHtcbiAgICAgICAgbGV0IGVsZSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgICAgICAgZWxlLmlubmVySFRNTCA9ICd3YW5nLmhhb3l1J1xuICAgICAgICByZXR1cm4gZWxlXG4gICAgfSlcbn1cbmltcG9ydExvYWRzaCgpLnRoZW4oKGVsZSkgPT4ge1xuICAgIGRvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoZWxlKVxufSlcblxuLy8gY29uc3QgbG9hZHNoSm9pbiA9IF8uam9pbihbNCwgNSwgNl0sIFwiKipcIilcbi8vIGNvbnNvbGUubG9nKGxvYWRzaEpvaW4pXG4vLyBjb25zb2xlLmxvZyhzdW0oMywgNSkpIl0sIm1hcHBpbmdzIjoiQUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUdBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUdBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBR0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFDQTtBQUNBO0FBR0E7QUFDQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/main.js\n");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"./node_modules/_axios@0.20.0@axios/index.js\");\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);\n// import testImg from \"./test-img.jpeg\"\n// import style from \"./index.modules.suss\";\n// // import \"./index.scss\"\n// import \"./font/iconfont.css\"\n// console.log(style, 'style5')\n// const img = new Image();\n// img.src = testImg;\n// img.classList.add(style.root.image)\n// let root = document.getElementById('root')\n// root.appendChild(img)\n// const div = document.createElement(\"div\")\n// div.id = 'icon'\n// div.className = \"iconshuaxinzhongjieban iconfont\"\n// root.appendChild(div)\n// 使用sourceMap\n// 故意写错 devTool:\"none\" 没有映射关系\n// // console.log(\"hello world1111\")\n// import \"./index.css\"\n// const root = document.getElementById(\"root\")\n// const btn = document.createElement(\"button\")\n// btn.innerText = \"点击我\"\n// root.appendChild(btn)\n// console.log(\"add\")\n// btn.addEventListener('click', () => {\n//     const div = document.createElement('div')\n//     div.innerText = '创建的div'\n//     div.className = 'div'\n//     root.appendChild(div)\n// })\n// import count from \"./HRM/count\"\n// import number from \"./HRM/number\"\n// count()\n// number()\n// if (module.hot) {\n//     module.hot.accept(\"./HRM/number\", () => {\n//         const numberDom = document.getElementById(\"number\")\n//         document.body.removeChild(numberDom)\n//         number()\n//     })\n// }\n// import \"@babel/polyfill\";\n// Babel处理ES6语法\n// const arr = [\n//     new Promise(() => {}),\n//     new Promise(() => {})\n// ]\n// arr.map(i => {\n//     return i\n// })\n// import \"./index.css\"\n// import {\n//     sum\n// } from \"./treeShaking/index.js\"\n// 异步代码会自动分割\n\n\nfunction importLoadsh() {\n  return __webpack_require__.e(/*! import() | lodash */ \"lodash\").then(__webpack_require__.t.bind(null, /*! lodash */ \"./node_modules/_lodash@4.17.20@lodash/lodash.js\", 7)).then(function (_ref) {\n    var _ = _ref.default;\n    var ele = document.createElement(\"div\");\n    ele.innerHTML = 'wang.haoyu';\n    return ele;\n  });\n}\n\nimportLoadsh().then(function (ele) {\n  document.body.appendChild(ele);\n}); // const loadshJoin = _.join([4, 5, 6], \"**\")\n// console.log(loadshJoin)\n// console.log(sum(3, 5))//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvbWFpbi5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy9tYWluLmpzPzU2ZDciXSwic291cmNlc0NvbnRlbnQiOlsiLy8gaW1wb3J0IHRlc3RJbWcgZnJvbSBcIi4vdGVzdC1pbWcuanBlZ1wiXG4vLyBpbXBvcnQgc3R5bGUgZnJvbSBcIi4vaW5kZXgubW9kdWxlcy5zdXNzXCI7XG4vLyAvLyBpbXBvcnQgXCIuL2luZGV4LnNjc3NcIlxuLy8gaW1wb3J0IFwiLi9mb250L2ljb25mb250LmNzc1wiXG5cblxuLy8gY29uc29sZS5sb2coc3R5bGUsICdzdHlsZTUnKVxuLy8gY29uc3QgaW1nID0gbmV3IEltYWdlKCk7XG4vLyBpbWcuc3JjID0gdGVzdEltZztcbi8vIGltZy5jbGFzc0xpc3QuYWRkKHN0eWxlLnJvb3QuaW1hZ2UpXG4vLyBsZXQgcm9vdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290Jylcbi8vIHJvb3QuYXBwZW5kQ2hpbGQoaW1nKVxuXG4vLyBjb25zdCBkaXYgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4vLyBkaXYuaWQgPSAnaWNvbidcbi8vIGRpdi5jbGFzc05hbWUgPSBcImljb25zaHVheGluemhvbmdqaWViYW4gaWNvbmZvbnRcIlxuLy8gcm9vdC5hcHBlbmRDaGlsZChkaXYpXG5cbi8vIOS9v+eUqHNvdXJjZU1hcFxuLy8g5pWF5oSP5YaZ6ZSZIGRldlRvb2w6XCJub25lXCIg5rKh5pyJ5pig5bCE5YWz57O7XG4vLyAvLyBjb25zb2xlLmxvZyhcImhlbGxvIHdvcmxkMTExMVwiKVxuLy8gaW1wb3J0IFwiLi9pbmRleC5jc3NcIlxuLy8gY29uc3Qgcm9vdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwicm9vdFwiKVxuLy8gY29uc3QgYnRuID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImJ1dHRvblwiKVxuLy8gYnRuLmlubmVyVGV4dCA9IFwi54K55Ye75oiRXCJcbi8vIHJvb3QuYXBwZW5kQ2hpbGQoYnRuKVxuLy8gY29uc29sZS5sb2coXCJhZGRcIilcbi8vIGJ0bi5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+IHtcbi8vICAgICBjb25zdCBkaXYgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKVxuLy8gICAgIGRpdi5pbm5lclRleHQgPSAn5Yib5bu655qEZGl2J1xuLy8gICAgIGRpdi5jbGFzc05hbWUgPSAnZGl2J1xuLy8gICAgIHJvb3QuYXBwZW5kQ2hpbGQoZGl2KVxuLy8gfSlcbi8vIGltcG9ydCBjb3VudCBmcm9tIFwiLi9IUk0vY291bnRcIlxuLy8gaW1wb3J0IG51bWJlciBmcm9tIFwiLi9IUk0vbnVtYmVyXCJcblxuXG4vLyBjb3VudCgpXG4vLyBudW1iZXIoKVxuXG4vLyBpZiAobW9kdWxlLmhvdCkge1xuLy8gICAgIG1vZHVsZS5ob3QuYWNjZXB0KFwiLi9IUk0vbnVtYmVyXCIsICgpID0+IHtcbi8vICAgICAgICAgY29uc3QgbnVtYmVyRG9tID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJudW1iZXJcIilcbi8vICAgICAgICAgZG9jdW1lbnQuYm9keS5yZW1vdmVDaGlsZChudW1iZXJEb20pXG4vLyAgICAgICAgIG51bWJlcigpXG4vLyAgICAgfSlcbi8vIH1cblxuLy8gaW1wb3J0IFwiQGJhYmVsL3BvbHlmaWxsXCI7XG4vLyBCYWJlbOWkhOeQhkVTNuivreazlVxuLy8gY29uc3QgYXJyID0gW1xuLy8gICAgIG5ldyBQcm9taXNlKCgpID0+IHt9KSxcbi8vICAgICBuZXcgUHJvbWlzZSgoKSA9PiB7fSlcbi8vIF1cbi8vIGFyci5tYXAoaSA9PiB7XG4vLyAgICAgcmV0dXJuIGlcbi8vIH0pXG4vLyBpbXBvcnQgXCIuL2luZGV4LmNzc1wiXG4vLyBpbXBvcnQge1xuLy8gICAgIHN1bVxuLy8gfSBmcm9tIFwiLi90cmVlU2hha2luZy9pbmRleC5qc1wiXG5cbi8vIOW8guatpeS7o+eggeS8muiHquWKqOWIhuWJslxuaW1wb3J0IGF4aW9zIGZyb20gXCJheGlvc1wiXG5cbmZ1bmN0aW9uIGltcG9ydExvYWRzaCgpIHtcbiAgICByZXR1cm4gaW1wb3J0ICggLyogd2VicGFja0NodW5rTmFtZTpcImxvZGFzaFwiICovIFwibG9kYXNoXCIpLnRoZW4oKHtcbiAgICAgICAgZGVmYXVsdDogX1xuICAgIH0pID0+IHtcbiAgICAgICAgbGV0IGVsZSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgICAgICAgZWxlLmlubmVySFRNTCA9ICd3YW5nLmhhb3l1J1xuICAgICAgICByZXR1cm4gZWxlXG4gICAgfSlcbn1cbmltcG9ydExvYWRzaCgpLnRoZW4oKGVsZSkgPT4ge1xuICAgIGRvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoZWxlKVxufSlcblxuLy8gY29uc3QgbG9hZHNoSm9pbiA9IF8uam9pbihbNCwgNSwgNl0sIFwiKipcIilcbi8vIGNvbnNvbGUubG9nKGxvYWRzaEpvaW4pXG4vLyBjb25zb2xlLmxvZyhzdW0oMywgNSkpIl0sIm1hcHBpbmdzIjoiQUFBQTtBQUFBO0FBQUE7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUdBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUdBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQSw0S0FBQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFDQTtBQUNBO0FBR0E7QUFDQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/main.js\n");
 
 /***/ })
 
