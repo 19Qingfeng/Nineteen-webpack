@@ -66,11 +66,28 @@ module.exports = {
     },
     optimization: {
         splitChunks: {
-            chunks: "initial",
-            // cacheGroups: {
-            //     vendors: false,
-            //     default: false
-            // }
+            chunks: 'all',
+            minSize: 1,
+            maxSize: 0,
+            minChunks: 1,
+            maxAsyncRequests: 30,
+            maxInitialRequests: 30,
+            automaticNameDelimiter: '~',
+            // enforceSizeThreshold: 50000,
+            cacheGroups: {
+                vendors: false,
+                defaultVendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    filename: "lodash",
+                    priority: -10,
+                    reuseExistingChunk: false
+                },
+                default: {
+                    minChunks: 1,
+                    priority: -20,
+                    reuseExistingChunk: true
+                }
+            }
         }
     },
     // 配置plugin

@@ -457,8 +457,9 @@ import "@babel/polyfill";
   1. targets,比如下面的配置就告诉 babel 我的代码要跑在 chrome67 以上的版本，所以结合 preset-env，一些语法如果 chrome67 以上就已经只吃了那么就不需要 polyfill 额外转译，这样也就较少了包的体积。
   2. corejs,为 preset-env 声明 corejs 版本，见官网说明:
      > Since @babel/polyfill was deprecated in 7.4.0, we recommend directly adding core-js and setting the version via the corejs option.
-     > 使用@babel/prest-env配合babel-polyfill的按需引入，也就是useBuiltIns选项时候，要求显示指明corejs版本，否则默认为2.x并且打包时候提示warming。
-     > 以及使用corejs，不要忘记按照，corejs配置区别见下方transfrom-runtime。
+     > 使用@babel/prest-env 配合 babel-polyfill 的按需引入，也就是 useBuiltIns 选项时候，要求显示指明 corejs 版本，否则默认为 2.x 并且打包时候提示 warming。
+     > 以及使用 corejs，不要忘记按照，corejs 配置区别见下方 transfrom-runtime。
+
 ```
     {
                 test: /\.js$/,
@@ -530,7 +531,7 @@ options: {
 - 日常业务代码使用 polyfill 就可以，对于类库的打包使用 transform-runtime 最佳。
 - 无论是 polyfill 还是 transform-runtime 都是对于 ES6 一些内置模块/属性/方法在 ES5 中进行转译的规则，比如 Promise，proxy,reflect 等等通过 ES5 代码实现让低版本浏览器识别。
 - babel-preset-env 是将 ES6 语法转译成 ES6 的，比如 let，const 等。
-- 所以 polyfill 和 transform-runtime 其实是同一种作用，但是 preset-env 和他们实现的功能是不同的。可以理解为 preset-env 是基础，所以无论 polyfill 还是 transform-runtime 这两种补充内置模块转译的规则（比如ES6内置的Promise），仍然都需要使用 env 去转译基础语法。
+- 所以 polyfill 和 transform-runtime 其实是同一种作用，但是 preset-env 和他们实现的功能是不同的。可以理解为 preset-env 是基础，所以无论 polyfill 还是 transform-runtime 这两种补充内置模块转译的规则（比如 ES6 内置的 Promise），仍然都需要使用 env 去转译基础语法。
 
 ### Vue 和 React
 
@@ -565,6 +566,10 @@ options: {
 ## Webpack 高级概念
 
 ### TreeShaking
+
+> 结论：在看了很多第三方库的源码后，终于发现TreeShaking对于很多第三库其实是不支持的。因为他们源码写法的缘故所以无法被TreeShaking。
+
+> 至于如何解决第三方类库无法被TreeShaking，需要我们自己动手写一个loader处理相应库，这部分代码我在后边补充。
 
 > TreeShaking 的意思是说 webpack 对于一些 ES Module 引入方式，打包后删除模块中并没有被项目引入到的代码。也就是引入什么打包什么，按需加载。
 >
@@ -675,17 +680,20 @@ module.exports = merge(common,prodConfig)
 ```
 
 ### Code Splitting
-> 其实Code Splitting并不是webpack中的概念，在没有webpack之前就已经存在Code Splitting了。
-> 只不过是Webpack帮我们更方便的进行Code Splitting。
-+ webpack中二种代码分割方式。
-  
-  1. 通过entry手动进行代码分割。
 
-  2. 通过SplitChunksPlugin进行代码分割进行重复数据删除和拆分。(Webpack4+这个插件已经不需要额外引入了，集成在了optimization中的splitChunks)
+> 其实 Code Splitting 并不是 webpack 中的概念，在没有 webpack 之前就已经存在 Code Splitting 了。
+> 只不过是 Webpack 帮我们更方便的进行 Code Splitting。
+
+- webpack 中二种代码分割方式。
+
+  1. 通过 entry 手动进行代码分割。
+
+  2. 通过 SplitChunksPlugin 进行代码分割进行重复数据删除和拆分。(Webpack4+这个插件已经不需要额外引入了，集成在了 optimization 中的 splitChunks)
 
   3. 动态引入。（异步引入的代码会被自动分割）
 
-1. 传统方式的手动代码分割：使用entry分割。
+1. 传统方式的手动代码分割：使用 entry 分割。
+
 ```
 // 比如我们代码中引入了lodash
 // lodash.js
@@ -694,10 +702,12 @@ import _ from "lodash"
 // 单独手动拆分lodash成一个文件在入口配置中进行单独打包
 window._ = _
 ```
+
 ```
 // 业务逻辑代码
 ...
 ```
+
 ```
 // 配置文件 通过多入口进行CodeSplitting
 // 注意打包的顺序 entry配置入口文件顺序
@@ -710,10 +720,12 @@ entry: {
 }
 ```
 
-> 这样就拆分出来的lodash和main代码，这是传统方式的手动Code Splitting。
+> 这样就拆分出来的 lodash 和 main 代码，这是传统方式的手动 Code Splitting。
 
 2. optimization - splitChunks
-+ 同步代码分割
+
+- 同步代码分割
+
 ```
 // 对于同步引入代码也会进行了分割
 optimization: {
@@ -722,30 +734,35 @@ optimization: {
         }
     },
 ```
-+ 异步代码分割(异步引入代码一定会进行分割，无论是否匹配到splitChunks的条件)
+
+- 异步代码分割(异步引入代码一定会进行分割，无论是否匹配到 splitChunks 的条件)
+
 ```
 // 并没有配置optimization中的splitChunks
 
 ```
 
-> 其实这就是webpack中的Code Splitting。
+> 其实这就是 webpack 中的 Code Splitting。
+
 ###### Tips:
-+ Webpack在做同步代码引入的时候，会根据optimization中的splitChunks配置。满足条件进行代码分割。
-+ Webpack对于异步代码的引入方式，是一定会将异步引入的代码分割的。
-> 因为异步引入的话只有需要的时候才会引入，所以是会自动分割出来的。需要的时候才会进行加载。
+
+- Webpack 在做同步代码引入的时候，会根据 optimization 中的 splitChunks 配置。满足条件进行代码分割。
+- Webpack 对于异步代码的引入方式，是一定会将异步引入的代码分割的。
+  > 因为异步引入的话只有需要的时候才会引入，所以是会自动分割出来的。需要的时候才会进行加载。
 
 ### SplitChunks
-> 进一步带大家来了解SplitChunksPlugin，optimization中的splitChunks底层就是这个插件。
+
+> 进一步带大家来了解 SplitChunksPlugin，optimization 中的 splitChunks 底层就是这个插件。
 
 #### 首先说一下异步代码的魔法注释[Magic Comments](https://webpack.js.org/api/module-methods/#magic-comments)
 
-+ webpackIgnore：设置为时，禁用动态导入解析true。表示异步代码并不进行Code Splitting。
+- webpackIgnore：设置为时，禁用动态导入解析 true。表示异步代码并不进行 Code Splitting。
 
-+ webpackChunkName：新块的名称。异步组件代码分割命名。
+- webpackChunkName：新块的名称。异步组件代码分割命名。
 
-+ webpackPrefetch/webpackPreload之后会专门讲。
+- webpackPrefetch/webpackPreload 之后会专门讲。
 
-+ webpackMode：自webpack 2.6.0起，可以指定用于解决动态导入的不同模式。选项去查官网吧，有lazy模式。
+- webpackMode：自 webpack 2.6.0 起，可以指定用于解决动态导入的不同模式。选项去查官网吧，有 lazy 模式。
 
 ```
 // Single target
@@ -768,28 +785,30 @@ import(
 );
 ```
 
-#### SplitChunks配置
+#### SplitChunks 配置
 
 **首先放结论:关于同步和异步代码分割**
-+ 如果配置splitChunks中的chunks为all。
 
-  + 如果通过同步代码引入，进入splitChunks配置。满足-分割，不满足-不分割。
-  
-  + 如果异步代码引入，同样会进入splitChunks配置。满足-匹配进入分组,不满足-不进入分组(还是会分割，只不过完全按照Magic Comments的配置)。除非设置webpackIgnore:false才会不分割异步代码。
+- 如果配置 splitChunks 中的 chunks 为 all。
 
-+ 如果配置为initial
-  
-  + 同步代码，同样逻辑。
+  - 如果通过同步代码引入，进入 splitChunks 配置。满足-分割，不满足-不分割。
 
-  + 异步代码，不会进入optimization中的splitChunks配置，会按照自己的魔法注释分割。
-  
-+ 如果配置为async
+  - 如果异步代码引入，同样会进入 splitChunks 配置。满足-匹配进入分组,不满足-不进入分组(还是会分割，只不过完全按照 Magic Comments 的配置)。除非设置 webpackIgnore:false 才会不分割异步代码。
 
-  + 同步代码不进入。
+- 如果配置为 initial
 
-  + 异步代码进入配置匹配项，匹配-进入分组cacheGroup，不匹配按照自己魔法注释分割。
+  - 同步代码，同样逻辑。
 
-*splitChunks如果没有配置，存在默认配置项:*
+  - 异步代码，不会进入 optimization 中的 splitChunks 配置，会按照自己的魔法注释分割。
+
+- 如果配置为 async
+
+  - 同步代码不进入。
+
+  - 异步代码进入配置匹配项，匹配-进入分组 cacheGroup，不匹配按照自己魔法注释分割。
+
+_splitChunks 如果没有配置，存在默认配置项:_
+
 ```
 module.exports = {
   //...
@@ -799,15 +818,15 @@ module.exports = {
       chunks: 'all',
       // 生成块的最小字节大小，当包小于minSize规定的字节大小时不进行代码分割配置(注意区分同步异步)
       minSize: 20000,
-      // 通过确保拆分后剩余的最小块大小超过限制来避免大小为零的模块。(我的理解是确保拆分后最小的模块大小)
-      minRemainingSize: 0,
       // 不常用，他的值是将打包分割后的库尝试进行二次拆分，尝试将打包后的代码按照maxSize的大小进行拆分成多个文件。
+      // 如果分割的chunk大于maxSize的值会尝试拆分成为maxSzie大小，如果无法二次分割还是不会分割。
       maxSize: 0,
       // 当一个模块至少被使用次数达到要求之后才会进行分割
       minChunks: 1,
       // 按需加载时并行请求的最大数量，也就是同时加载模块数。
+      // 如果超过30个chunks 也就是请求会同时发起超过30个 那么在30个包后就不会进行分割了
       maxAsyncRequests: 30,
-      // 入口点上并行请求的最大数量，
+      // 入口点上并行请求的最大数量，首页代码进入分割的最多个数
       // 也就是网站入口文件中通过代码分割进行最多的分割数
       maxInitialRequests: 30,
       // 默认情况下，webpack将使用块的来源和名称生成名称（例如vendors~main.js）。此选项使您可以指定用于生成名称的定界符。
@@ -831,20 +850,26 @@ module.exports = {
   }
 };
 ```
-+ cacheGroups拿出来单独说。
-> 缓存组可以继承和/或覆盖splitChunks.*;中的任何选项。他可以配置任何splitChunks中的配置进行覆盖，但是她也拥有一些自己的配置
-> splitChunks条件会进入cacheGroup中的按照组条件进行Code Splitting。
-  + priority:一个模块可以属于多个缓存组。优化将优先选择具有较高的缓存组priority。默认组的优先级为负，以允许自定义组获得更高的优先级（默认值适用0于自定义组）。
 
-  + reuseExistingChunk:如果当前块包含已经从主包中分离出来的模块，那么它将被重用，而不是生成一个新的模块。这可能会影响块的文件名。（举例a，b两个第三方库，一个页面中引入a，b。但a中又使用了b模块，在打包a的时候符合要求会打包，正常来说在打包a的时候因为a引入了b。所以b也会进入分割和a同一个组中。reuseExistingChunk：true他会发现之前已经引入过b.js，所以在a中引入b的时候他会直接去复用之前的代码。）
+- cacheGroups 拿出来单独说。
+  
+  > cacheGroups缓存组，根据test匹配的模块存放的路径。在各个文件引入的时候先缓存在各自的组里。当最终所有模块分析好后，按照各自组进行打包对应chunk。
 
-  + test:控制此缓存组选择的模块。省略它会选择所有模块。它可以匹配绝对模块资源路径或块名称。匹配块名称时，将选择块中的所有模块。
+  > 缓存组可以继承和/或覆盖 splitChunks.\*;中的任何选项。他可以配置任何 splitChunks 中的配置进行覆盖，但是她也拥有一些自己的配置
+  > splitChunks 条件会进入 cacheGroup 中的按照组条件进行 Code Splitting。
 
-  +  default:默认组名（当以上都不存在时进入default，前提是满足splitChunks外置匹配条件进入组匹配后）。
+  - priority:一个模块可以属于多个缓存组。优化将优先选择具有较高的缓存组 priority。默认组的优先级为负，以允许自定义组获得更高的优先级（默认值适用 0 于自定义组）。
 
-  + filename,配置filename后该cacheGroup生成的文件不在被称作组名+文件名了，而是直接被叫做filename。这可以在我们进行第三方库打包时候进行配置，比如elementui匹配的cachegroup那么生成的就叫做elementui.js。
+  - reuseExistingChunk:如果当前块包含已经从主包中分离出来的模块，那么它将被重用，而不是生成一个新的模块。这可能会影响块的文件名。（举例 a，b 两个模块，一个页面中引入 a，b。但 a 中又使用了 b 模块，在打包 a 的时候符合要求会打包，正常来说在打包 a 的时候因为 a 引入了 b。所以 b 也会进入分割和 a 同一个组中。reuseExistingChunk：true 他会发现之前已经引入过 b.js，所以在 a 中引入 b 的时候他会直接去复用之前的代码。）(仅仅影响块文件名，true复用不移动缓存组，true移动模块到新缓存组)
 
-  + 其他用到了查官网吧。
+  - test:控制此缓存组选择的模块。省略它会选择所有模块。它可以匹配绝对模块资源路径或块名称。匹配块名称时，将选择块中的所有模块。
+
+  - default:默认组名（当以上都不存在时进入 default，前提是满足 splitChunks 外置匹配条件进入组匹配后）。
+
+  - filename:配置 filename 后该 cacheGroup 生成的文件不在被称作组名+文件名了，而是直接被叫做 filename。这可以在我们进行第三方库打包时候进行配置，比如 elementui 匹配的 cachegroup 那么生成的就叫做 elementui.js。
+
+  - 其他用到了查官网吧。
+
 ```
 cacheGroups: {
           // cacheGroups当打包同步代码的时候，上边的参数会有效同时会继续往下根据
@@ -874,4 +899,34 @@ cacheGroups: {
         }
       }
 }
+```
+
+###### reuseExistingChunk配置有点吃不透，等待周六补充下。
+
+#### splitChunks/optimization-splitChunks 一些坑
+
+> 我现在使用的版本是 webpack4.44.1。
+
+- 关于 cacheGroup
+
+```
+// 官网并没有指出 cacheGroup存在一个默认的分组
+// 如果不显示关闭 那么它一直会存在
+// 我代码理的vendors如果我不进行配置他也是会一直存在 所以的的node_modules的代码一直会进入vendors里面去。
+// 解决这个问题 要么是使用vendors 要么直接关闭 用自己的分组 要么使用有衔接priority解决
+// 官网并没有指出 已经更新为defaultVendors 但是实际我的配置还是会进入vendors
+cacheGroups: {
+                vendors: false,
+                defaultVendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    filename: "lodash",
+                    priority: -10,
+                    reuseExistingChunk: false
+                },
+                default: {
+                    minChunks: 1,
+                    priority: -20,
+                    reuseExistingChunk: true
+                }
+            }
 ```
