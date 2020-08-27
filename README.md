@@ -867,6 +867,8 @@ module.exports = {
   - default:默认组名（当以上都不存在时进入 default，前提是满足 splitChunks 外置匹配条件进入组匹配后）。
 
   - filename:配置 filename 后该 cacheGroup 生成的文件不在被称作组名+文件名了，而是直接被叫做 filename。这可以在我们进行第三方库打包时候进行配置，比如 elementui 匹配的 cachegroup 那么生成的就叫做 elementui.js。
+  > 官网解释:This option can also be set globally in splitChunks.filename, but this isn't recommended and will likely lead to an error if splitChunks.chunks is not set to 'initial'. Avoid setting it globally.
+  > 缓存组设置filename时，在chunks项配置为inital时才会生效，我们分割同步代码时，可以设置chunk为inital，这样就可以自定义filename了。否则会报错。
 
   - 其他用到了查官网吧。
 
@@ -901,7 +903,7 @@ cacheGroups: {
 }
 ```
 
-###### reuseExistingChunk配置有点吃不透，等待周六补充下。
+###### reuseExistingChunk配置有点吃不透，先mark常用配置为true。等待周六补充下。
 
 #### splitChunks/optimization-splitChunks 一些坑
 

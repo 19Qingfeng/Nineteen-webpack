@@ -66,7 +66,7 @@ module.exports = {
     },
     optimization: {
         splitChunks: {
-            chunks: 'all',
+            chunks: 'initial',
             minSize: 1,
             maxSize: 0,
             minChunks: 1,
@@ -78,7 +78,7 @@ module.exports = {
                 vendors: false,
                 defaultVendors: {
                     test: /[\\/]node_modules[\\/]/,
-                    filename: "lodash",
+                    filename: "common",
                     priority: -10,
                     reuseExistingChunk: false
                 },

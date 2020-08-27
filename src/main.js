@@ -63,25 +63,25 @@
 // 异步代码会自动分割
 // import axios from "axios"
 
-// function importLoadsh() {
-//     return import ( /* webpackChunkName:"lodash" */ "lodash").then(({
-//         default: _
-//     }) => {
-//         let ele = document.createElement("div")
-//         ele.innerHTML = 'wang.haoyu'
-//         return ele
-//     })
-// }
-// importLoadsh().then((ele) => {
-//     document.body.appendChild(ele)
-// })
+function importLoadsh() {
+    return import ( /* webpackChunkName:"lodash" */ "lodash").then(({
+        default: _
+    }) => {
+        let ele = document.createElement("div")
+        ele.innerHTML = 'wang.haoyu'
+        return ele
+    })
+}
+importLoadsh().then((ele) => {
+    document.body.appendChild(ele)
+})
 
 // const loadshJoin = _.join([4, 5, 6], "**")
 // console.log(loadshJoin)
 // console.log(sum(3, 5))
 // import $ from "jquery"
-import one from "./chunks/1.js"
-import two from "./chunks/2.js";
+// import one from "./chunks/1.js"
+// import two from "./chunks/2.js";
 // import three from "./chunks/3.js";
 // import four from "./chunks/4.js";
 // import five from "./chunks/5.js";
@@ -91,9 +91,9 @@ import two from "./chunks/2.js";
 // console.log(_)
 
 
-one()
-two()
-    // three()
-    // four()
-    // five()
-    // console.log("this is main")
+// one()
+// two()
+// three()
+// four()
+// five()
+// console.log("this is main")
