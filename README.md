@@ -842,6 +842,8 @@ module.exports = {
       // 如果分割的chunk大于maxSize的值会尝试拆分成为maxSzie大小，如果无法二次分割还是不会分割。
       maxSize: 0,
       // 当一个模块至少被使用次数达到要求之后才会进行分割
+      // 注意是chunks 表示被打包生成的chunk引入的次数
+      // 打包后的js文件每一个文件都可以理解为一个chunk
       minChunks: 1,
       // 按需加载时并行请求的最大数量，也就是同时加载模块数。
       // 如果超过30个chunks 也就是请求会同时发起超过30个 那么在30个包后就不会进行分割了
@@ -954,3 +956,34 @@ cacheGroups: {
                 }
             }
 ```
+
+### Lazy Loading
+
+> Lazy Loading懒加载其实在Vue或者React中特别常见，就比如路由懒加载。实际上就是动态import。
+
+> Lazy Loading实际上是EcmaScript提出来的概念，通过动态import在需要的时候才进行加载这就叫做懒加载。
+
+> Webpack中只是通过动态import语句识别懒加载，然后对于动态引入的模块进行Code Splitting。分割后的chunk在一定条件下才会加载。加快了首屏的加载速度。这也就是为什么默认异步import引入的模块会被CodeSplitting的原因。
+
+##### 代码演示LazyLoading
+```
+async function importComponent() {
+  // 动态引入lodash
+  // webpack默认对于异步代码拆分 会拆分单独打包的lodash在需要的时候才会加载lodash.js
+  const { default:_ } = await import("webpackChunkName:'lodash'"lodash)
+  const element = document.createElement('div')
+  element.innerHTML = _.join(["wang","hao","yu"],"=")
+  return element
+}
+// 当用户点击页面的时候进行懒加载lodash执行逻辑
+document.addEventListener('click',() => {
+  getComponent().then(ele => {
+    document.body.appendChild(ele)
+  })
+})
+```
+
+###### 什么是chunk
+> chunk其实就是打包后的每一个JS文件就可以被称为一个chunk，回忆一下之前说的CodeSPlitting有一个配置条件minChunks。
+
+> minChunks意思指的是打包后的JS文件，也就是chunk引入的次数。而非代码中import的次数。
