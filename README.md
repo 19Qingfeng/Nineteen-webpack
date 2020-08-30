@@ -193,7 +193,7 @@ module.exports = {
 
 #### [optimize-css-assets-webpack-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production)
 
-> 配合mini-css-extract-plugin生成的 css 文件进行压缩。optimization 中 minimizer 的配置项。
+> 配合 mini-css-extract-plugin 生成的 css 文件进行压缩。optimization 中 minimizer 的配置项。
 
 ```
 const TerserJSPlugin = require('terser-webpack-plugin');
@@ -1135,7 +1135,7 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 
 ### [css 代码分割](https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production)
 
-- Css 代码分割就是使用 mini-css-extract-plugin 代替 style-loader 进行配置。参考css-minimizer-webpack-plugin 插件讲述。
+- Css 代码分割就是使用 mini-css-extract-plugin 代替 style-loader 进行配置。参考 css-minimizer-webpack-plugin 插件讲述。
 
   1. 安装 mini-css-extract-plugin。
 
@@ -1174,14 +1174,16 @@ module.exports = {
   },
 };
 ```
-> 其实让我说，我真觉得css分布分割意义不大，现在的网速，已经很快了。除非移动端，你想让页面展示的更快一些，把css分离出来，可能会略微有一点点用处。
 
-### Webpack与浏览器缓存(Caching)
+> 其实让我说，我真觉得 css 分布分割意义不大，现在的网速，已经很快了。除非移动端，你想让页面展示的更快一些，把 css 分离出来，可能会略微有一点点用处。
 
-#### output占位符解决缓存问题。
+### Webpack 与浏览器缓存(Caching)
+
+#### output 占位符解决缓存问题。
+
 > 第三方库的代码在我们每次构建之后其实都没有变化，浏览器对于文件名称没有变化的静态资源会优先从缓存中去命中。
 
-> 这就是基于这点，contentHash解决文件如果没有变更那么contentHash的值也就并不会变化。如果文件变更contentHash值变化，那么文件名变化浏览器就会重新请求了。
+> 这就是基于这点，contentHash 解决文件如果没有变更那么 contentHash 的值也就并不会变化。如果文件变更 contentHash 值变化，那么文件名变化浏览器就会重新请求了。
 
 ```
 output: {
@@ -1190,10 +1192,12 @@ output: {
 }
 ```
 
-> 新版本的webpack已经实现了contenthash未改变不改变的功能。
+> 新版本的 webpack 已经实现了 contenthash 未改变不改变的功能。
 
-> 对于老版本的webpack，也就是如果代码没有改变有可能contenthash的值也会变化。
->> 解决这个问题需要在optimization中额外配置。(当然新版本这么配置也没有任何问题)
+> 对于老版本的 webpack，也就是如果代码没有改变有可能 contenthash 的值也会变化。
+>
+> > 解决这个问题需要在 optimization 中额外配置。(当然新版本这么配置也没有任何问题)
+
 ```
 optimization: {
   runtimeChunk: {
@@ -1203,10 +1207,109 @@ optimization: {
 }
 ```
 
-**这样在未改变原代码的情况下，contenthash的值就不会变化了。(当然新版本陪它也没有任何问题)**
+**这样在未改变原代码的情况下，contenthash 的值就不会变化了。(当然新版本陪它也没有任何问题)**
 
-> 可以看到配置了runtimeChunk后每次打包都会生成一个runtime.xxx.js。
-> 在webpack中关于第三方的库和业务代码的关系会放在一个manifest的文件中，默认manifest文件会存在业务代码中也会存在第三方库代码中。(因为它是映射关系文件)。
-> manifest在旧版本的webpack中每次打包都会有差异，正是因为这个差异即使在老版本webpack中没有改变代码，webpack打包会认为文件发生变化。
-> 当配置runtimeChunk配置，就告诉webpack抽离manifest关系代码为单独文件，业务逻辑和第三方库并不存在manifest映射逻辑了。这样的话老版本中代码没有改变webpack就不会认为文件改变，contenthash也就不会改变，可以合理的使用缓存。
-> 注意:抽离的manifest.js也会走output，所以output的配置对manifest也有效，可以把它认为也是一个chunk。
+> 可以看到配置了 runtimeChunk 后每次打包都会生成一个 runtime.xxx.js。
+
+> 在 webpack 中关于第三方的库和业务代码的关系会放在一个 manifest 的文件中，默认 manifest 文件会存在业务代码中也会存在第三方库代码中。(因为它是映射关系文件)。
+
+> manifest 在旧版本的 webpack 中每次打包都会有差异，正是因为这个差异即使在老版本 webpack 中没有改变代码，webpack 打包会认为文件发生变化。
+
+> 当配置 runtimeChunk 配置，就告诉 webpack 抽离 manifest 关系代码为单独文件，业务逻辑和第三方库并不存在 manifest 映射逻辑了。这样的话老版本中代码没有改变 webpack 就不会认为文件改变，contenthash 也就不会改变，可以合理的使用缓存。
+
+> 注意:抽离的 manifest.js 也会走 output，所以 output 的配置对 manifest 也有效，可以把它认为也是一个 chunk。
+
+### Shimming(垫片)
+
+> Shimming的概念很宽泛，具体需要我们根据不同的场景去使用就好了。
+
+> 构建一些全局变量以供 src 中代码运行，这就是垫片简单来说的意思。
+
+> 比方一些老的第三方库，并不支持 esmodules 引入的方式，那么我们想再代码中去直接使用就会报错。
+
+```
+// jqueryui.js
+export function jqueryui () {
+  $('body').css('background','red')
+}
+```
+
+```
+// main.js
+import { jqueryui } from "./jqueryui.js"
+import $ from 'jquery'
+jqueryui()
+```
+
+> 这时候是一定会报错的，因为 jqueryui 中的\$无法被识别。模块和模块之间的变量是不能被共享的，所以 jqueryui 中无法使用 main 中的变量。
+>
+> > 这个场景下我们需要 webpack 打包时候识别 jqueryui 的\$，让他知道这是 jqeury 这个库。
+> >
+> > > 达到的效果是相当于见到$就会自动在当前模块内添加import $ from "jquery'。
+> > >
+> > > > 这就是垫片 shimming 的作用。
+> > > > **可以理解垫片 shimming 的作用就是为所有模块提供一些全局变量以让他们使用。**
+
+1. [webpack.ProvidePlugin](https://webpack.js.org/plugins/provide-plugin/)(提供给各个模块使用)
+
+> 借助 webpack 自身插件 providePlugin 提供全局变量注入供各个 module 使用。
+
+> providePlugin 自动加载，而不必每个模块去 import 和 require。
+
+> 也可以使用 providePlugin 进行使用
+
+```
+const webpack = require("webpack")
+plugin:[
+  ...
+  new webpack.ProvidePlugin({
+    // 发现使用_的话那么模块就会自动引入lodash
+    _:'lodash',
+    // 也可以指定完整路径
+    identifier: path.resolve(path.join(__dirname, 'src/module1'))，
+    // 同时也可以自己定义一些语法提供给各个模块使用 lodash的join方法(数组形式)
+    _join:["lodash","join"]
+  })
+]
+```
+
+```
+export function ui() {
+  $('body').css('background',_join(['blue','']))
+}
+
+```
+2. 【imports-loader](https://webpack.js.org/loaders/imports-loader/#using-configuration)
+> imports-loader允许我们使用依赖于特定全局变量的模块。
+
+> 使用配置去查文档吧。
+```
+console.log(this,'this')
+console.log(window === this) // false
+```
+> 通过上边的打印可以看到一个模块的this，在webpack中默认指向的是模块自身。
+
+> 如果强行让this指向window，可以使用imports-loader。
+
+```
+{
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use:['babel-loader',{
+                  loader:'imports-loader',
+                  options:{
+                    imports: 'default lib myName',
+                  }
+                }]
+},
+
+// 相当于
+import myName from 'lib';
+
+// ...
+// Code
+// ...
+CommonJS单
+```
+
+> imports-loader也可以充当垫片的作用，和webpack.ProvidePlugin可以做相同的事情:帮助我们在模块中去引入，而不用自己引入。
