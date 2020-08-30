@@ -68,6 +68,9 @@ module.exports = {
     },
     optimization: {
         minimizer: [new OptimizeCSSAssetsPlugin({})],
+        runtimeChunk: {
+            name: "runtime"
+        },
         splitChunks: {
             chunks: 'initial',
             minSize: 1,
@@ -104,10 +107,10 @@ module.exports = {
         new MiniCssExtractPlugin()
     ],
     output: {
-        filename: "[name].js",
+        filename: "[name].[contenthash].js",
         // publicPath: "/",
         // 相对于当前(webpack.config.js)的dist文件夹下
-        chunkFilename: "[name].test.js",
+        chunkFilename: "[name].[contenthash].chunk.js",
         path: path.resolve(__dirname, "../dist/")
     }
 }

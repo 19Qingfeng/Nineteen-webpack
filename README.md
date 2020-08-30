@@ -1175,3 +1175,38 @@ module.exports = {
 };
 ```
 > 其实让我说，我真觉得css分布分割意义不大，现在的网速，已经很快了。除非移动端，你想让页面展示的更快一些，把css分离出来，可能会略微有一点点用处。
+
+### Webpack与浏览器缓存(Caching)
+
+#### output占位符解决缓存问题。
+> 第三方库的代码在我们每次构建之后其实都没有变化，浏览器对于文件名称没有变化的静态资源会优先从缓存中去命中。
+
+> 这就是基于这点，contentHash解决文件如果没有变更那么contentHash的值也就并不会变化。如果文件变更contentHash值变化，那么文件名变化浏览器就会重新请求了。
+
+```
+output: {
+  filename:'[name].[contenthash].js',
+  chunkFilename:'[name].[contenthash].js'
+}
+```
+
+> 新版本的webpack已经实现了contenthash未改变不改变的功能。
+
+> 对于老版本的webpack，也就是如果代码没有改变有可能contenthash的值也会变化。
+>> 解决这个问题需要在optimization中额外配置。(当然新版本这么配置也没有任何问题)
+```
+optimization: {
+  runtimeChunk: {
+    name:'runtime'
+  }
+  ...
+}
+```
+
+**这样在未改变原代码的情况下，contenthash的值就不会变化了。(当然新版本陪它也没有任何问题)**
+
+> 可以看到配置了runtimeChunk后每次打包都会生成一个runtime.xxx.js。
+> 在webpack中关于第三方的库和业务代码的关系会放在一个manifest的文件中，默认manifest文件会存在业务代码中也会存在第三方库代码中。(因为它是映射关系文件)。
+> manifest在旧版本的webpack中每次打包都会有差异，正是因为这个差异即使在老版本webpack中没有改变代码，webpack打包会认为文件发生变化。
+> 当配置runtimeChunk配置，就告诉webpack抽离manifest关系代码为单独文件，业务逻辑和第三方库并不存在manifest映射逻辑了。这样的话老版本中代码没有改变webpack就不会认为文件改变，contenthash也就不会改变，可以合理的使用缓存。
+> 注意:抽离的manifest.js也会走output，所以output的配置对manifest也有效，可以把它认为也是一个chunk。
