@@ -62,6 +62,8 @@
 
 // 异步代码会自动分割
 // import axios from "axios"
+// css代码分割
+import "./index.css"
 
 function importLoadsh() {
     return import ( /* webpackChunkName:"lodash" */ "lodash").then(({

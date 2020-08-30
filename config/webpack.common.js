@@ -3,6 +3,8 @@ const htmlWebpackPlugin = require('html-webpack-plugin')
 const {
     CleanWebpackPlugin
 } = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 
 module.exports = {
     entry: {
@@ -46,7 +48,7 @@ module.exports = {
             {
                 test: /\.(scss|css)$/,
                 // css文件通常需要两个loader进行处理
-                use: ["style-loader",
+                use: [MiniCssExtractPlugin.loader,
                     {
                         loader: "css-loader",
                         options: {
@@ -65,6 +67,7 @@ module.exports = {
         ]
     },
     optimization: {
+        minimizer: [new OptimizeCSSAssetsPlugin({})],
         splitChunks: {
             chunks: 'initial',
             minSize: 1,
@@ -78,7 +81,7 @@ module.exports = {
                 vendors: false,
                 defaultVendors: {
                     test: /[\\/]node_modules[\\/]/,
-                    filename: "common",
+                    filename: "common.js",
                     priority: -10,
                     reuseExistingChunk: false
                 },
@@ -98,6 +101,7 @@ module.exports = {
             filename: "wanghaoyu.html"
         }),
         new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin()
     ],
     output: {
         filename: "[name].js",

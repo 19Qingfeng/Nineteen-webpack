@@ -159,6 +159,69 @@ module.exports = {
 
   > 之前配置更新了。。用到的还是查文档吧。。更新太快了。
 
+#### [mini-css-extract-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/)
+
+> 默认 webpack 会将 css 文件使用 style-loader 添加到页面 head 标签的 style 中去。(css in js)
+>
+> > 使用 mini-css-extract-pluginn 提供的 loader 代替 style-loader 进行拆分。
+
+```
+npm install --save-dev mini-css-extract-plugin
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// 代替CSsloader
+module.exports = {
+  plugins: [new MiniCssExtractPlugin()],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+
+- 配置参数
+
+  1. filename:拆分的 css 文件直接被页面引入，走 filename。
+  2. chunkFilename:被页面间接引入的 css 文件，走 chunkFilename。
+  3. Minimizing For Production
+     > 默认生成的 css 文件不会被压缩，使用 optimize-css-assets-webpack-plugin 进行压缩生成的 css 文件。
+  4. 关于 MiniCssExtractPlugin 底层其实也是根据 splitChunksPlugin 去拆分的，所以如果需要一些更高级的配置，比如[根据入口文件拆分 css 或者合并多个 css 文件进行一个 css 文件](https://webpack.js.org/plugins/mini-css-extract-plugin/#extracting-all-css-in-a-single-file)。[具体都可以参照官网进行配置 splitchunks 的 cachegroup](https://webpack.js.org/plugins/mini-css-extract-plugin/#root)
+
+#### [optimize-css-assets-webpack-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production)
+
+> 配合mini-css-extract-plugin生成的 css 文件进行压缩。optimization 中 minimizer 的配置项。
+
+```
+const TerserJSPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
+module.exports = {
+  optimization: {
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+Using preloa
+```
+
 ### Entry 和 Output 的基础配置
 
 #### entry
@@ -195,9 +258,12 @@ output: {
     chunkFilename:"[name].chunk.js"
 }
 ```
-> chunkFilename:对于非enrty的js文件(code splitting分割出的chunks)命名规则。
->> Code Splitting和webpackChunkName仅仅写的是name。
->>> 然后在出口统一会经过chunkFilename的处理。
+
+> chunkFilename:对于非 enrty 的 js 文件(code splitting 分割出的 chunks)命名规则。
+>
+> > Code Splitting 和 webpackChunkName 仅仅写的是 name。
+> >
+> > > 然后在出口统一会经过 chunkFilename 的处理。
 
 ### SourceMap
 
@@ -898,6 +964,8 @@ module.exports = {
 
   - filename: 配置 filename 后该 cacheGroup 生成的文件不在被称作组名+文件名了，而是直接被叫做 filename。这可以在我们进行第三方库打包时候进行配置，比如 elementui 匹配的 cachegroup 那么生成的就叫做 elementui.js。
 
+  * enforce: 通知 Webpack 忽略 splitChunks.minSize, splitChunks.minChunks, splitChunks.maxAsyncRequests 以及 splitChunks.maxInitialRequests 选项并始终为此缓存组创建块。(缓存组配置，也就是告诉 webpack 只要该缓存组匹配成功忽略上述几项进行拆分)
+
   > 官网解释: This option can also be set globally in splitChunks.filename, but this isn't recommended and will likely lead to an error if splitChunks.chunks is not set to 'initial'. Avoid setting it globally.
   > 缓存组设置 filename 时，在 chunks 项配置为 inital 时才会生效，我们分割同步代码时，可以设置 chunk 为 inital，这样就可以自定义 filename 了。否则会报错。
 
@@ -1064,3 +1132,46 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 > 所以在使用 Lazy Loading + code split 的时候配合 prefetch 使用效果最佳。
 
 **接下来就不要在代码中去过分关注缓存了，重点考虑的应该是代码利用率 code coverage。（当然并不是说不需要缓存，只不过 code coverage 应该是非常重要的性能点)**。
+
+### [css 代码分割](https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production)
+
+- Css 代码分割就是使用 mini-css-extract-plugin 代替 style-loader 进行配置。参考css-minimizer-webpack-plugin 插件讲述。
+
+  1. 安装 mini-css-extract-plugin。
+
+  2. 替换 style-loader。
+
+  3. 使用 css-minimizer-webpack-plugin 插件。
+
+- Css 代码压缩是使用 optimize-css-assets-webpack-plugin 进行 optimization 配置压缩
+  css。参考 optimize-css-assets-webpack-plugin 插件讲述。
+
+  1. 安装 optimize-css-assets-webpack-plugin。
+
+  2. optimization 中的 minimizer 进行使用。
+
+```
+const TerserJSPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+> 其实让我说，我真觉得css分布分割意义不大，现在的网速，已经很快了。除非移动端，你想让页面展示的更快一些，把css分离出来，可能会略微有一点点用处。
