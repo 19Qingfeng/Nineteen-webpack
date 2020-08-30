@@ -191,9 +191,13 @@ output: {
     path:path.resolve(__dirname,"dist"),
     // publicPath:将打包后的静态资源路径添加publicPath的路径
     // 重新打包后，文件的路径都会增加http://cdn.com.cn的前缀。（关于publicPath后边会相详细讲解）
-    publicPath:"http://cdn.com.cn"
+    publicPath:"http://cdn.com.cn",
+    chunkFilename:"[name].chunk.js"
 }
 ```
+> chunkFilename:对于非enrty的js文件(code splitting分割出的chunks)命名规则。
+>> Code Splitting和webpackChunkName仅仅写的是name。
+>>> 然后在出口统一会经过chunkFilename的处理。
 
 ### SourceMap
 
@@ -1059,4 +1063,4 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 
 > 所以在使用 Lazy Loading + code split 的时候配合 prefetch 使用效果最佳。
 
-**接下来就不要在代码中去过分关注缓存了，重点考虑的应该是代码利用率 code coverage。（当然并不是说不需要缓存，只不过 code coverage 应该是非常重要的性能点**。
+**接下来就不要在代码中去过分关注缓存了，重点考虑的应该是代码利用率 code coverage。（当然并不是说不需要缓存，只不过 code coverage 应该是非常重要的性能点)**。

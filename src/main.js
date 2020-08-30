@@ -72,9 +72,9 @@ function importLoadsh() {
         return ele
     })
 }
-importLoadsh().then((ele) => {
-    document.body.appendChild(ele)
-})
+// importLoadsh().then((ele) => {
+//     document.body.appendChild(ele)
+// })
 
 // const loadshJoin = _.join([4, 5, 6], "**")
 // console.log(loadshJoin)
@@ -97,3 +97,9 @@ importLoadsh().then((ele) => {
 // four()
 // five()
 // console.log("this is main")
+
+document.addEventListener('click', () => {
+    const ele = importLoadsh().then((ele) => {
+        document.body.appendChild(ele)
+    })
+})

@@ -103,6 +103,7 @@ module.exports = {
         filename: "[name].js",
         // publicPath: "/",
         // 相对于当前(webpack.config.js)的dist文件夹下
+        chunkFilename: "[name].test.js",
         path: path.resolve(__dirname, "../dist/")
     }
 }

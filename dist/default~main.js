@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[0],[,function(n,e,t){t.e(1).then(t.t.bind(null,0,7)).then((function(n){n.default;var e=document.createElement("div");return e.innerHTML="wang.haoyu",e})).then((function(n){document.body.appendChild(n)}))}]]);
