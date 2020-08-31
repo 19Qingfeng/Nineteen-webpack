@@ -1279,7 +1279,7 @@ export function ui() {
 }
 
 ```
-2. 【imports-loader](https://webpack.js.org/loaders/imports-loader/#using-configuration)
+2. [imports-loader](https://webpack.js.org/loaders/imports-loader/#using-configuration)
 > imports-loader允许我们使用依赖于特定全局变量的模块。
 
 > 使用配置去查文档吧。
@@ -1313,3 +1313,46 @@ CommonJS单
 ```
 
 > imports-loader也可以充当垫片的作用，和webpack.ProvidePlugin可以做相同的事情:帮助我们在模块中去引入，而不用自己引入。
+
+### Webapck中的环境变量
+> webpack 命令行 环境配置 的 --env 参数，可以允许你传入任意数量的环境变量。而在 webpack.config.js 中可以访问到这些环境变量。例如，--env.production 或 --env.NODE_ENV=local（NODE_ENV 通常约定用于定义环境类型，查看 这里）。
+```
+// 环境变量 env增加NODE_ENV=LOCAL 同时增加 production属性 默认是true
+webpack --env.NODE_ENV=local --env.production --progress
+
+// 注意写法 
+--env.production // 这种写法是增加production属性
+--env production // 而这种写法是直接覆盖env为production
+```
+```
+const path = require('path');
+
+module.exports = env => {
+  // Use env.<YOUR VARIABLE> here:
+  console.log('NODE_ENV: ', env.NODE_ENV); // 'local'
+  console.log('Production: ', env.production); // true
+
+  return {
+    entry: './src/index.js',
+    output: {
+      filename: 'bundle.js',
+      path: path.resolve(__dirname, 'dist'),
+    },
+  };
+};
+```
+
+#### 同时除了env也可以使用直接传递的形式给modules接收
+```
+// package.json srcript 直接传递test为test
+"compile": "webpack  --test=test  --env.production --config conwebpack.prod.js --mode production",
+```
+> 使用argv接收 argv会默认存在一些关于webpack打包的信息。
+>> 直接传递的参数会在argv中加入。
+```
+module.exports = (env, argv) => {
+    console.log(env, 'env')
+    console.log(argv, 'argv') // 会存在一个key为test的属性，value是test
+    return merge(common, prodConfig)
+}
+```

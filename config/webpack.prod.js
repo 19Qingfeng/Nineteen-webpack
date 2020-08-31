@@ -4,4 +4,7 @@ const {
 const common = require("./webpack.common")
 
 const prodConfig = {}
-module.exports = merge(common, prodConfig)
+
+module.exports = (env, argv) => {
+    return merge(common, prodConfig)
+}
