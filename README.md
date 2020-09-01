@@ -1221,7 +1221,7 @@ optimization: {
 
 ### Shimming(垫片)
 
-> Shimming的概念很宽泛，具体需要我们根据不同的场景去使用就好了。
+> Shimming 的概念很宽泛，具体需要我们根据不同的场景去使用就好了。
 
 > 构建一些全局变量以供 src 中代码运行，这就是垫片简单来说的意思。
 
@@ -1279,17 +1279,20 @@ export function ui() {
 }
 
 ```
+
 2. [imports-loader](https://webpack.js.org/loaders/imports-loader/#using-configuration)
-> imports-loader允许我们使用依赖于特定全局变量的模块。
+   > imports-loader 允许我们使用依赖于特定全局变量的模块。
 
 > 使用配置去查文档吧。
+
 ```
 console.log(this,'this')
 console.log(window === this) // false
 ```
-> 通过上边的打印可以看到一个模块的this，在webpack中默认指向的是模块自身。
 
-> 如果强行让this指向window，可以使用imports-loader。
+> 通过上边的打印可以看到一个模块的 this，在 webpack 中默认指向的是模块自身。
+
+> 如果强行让 this 指向 window，可以使用 imports-loader。
 
 ```
 {
@@ -1312,18 +1315,21 @@ import myName from 'lib';
 CommonJS单
 ```
 
-> imports-loader也可以充当垫片的作用，和webpack.ProvidePlugin可以做相同的事情:帮助我们在模块中去引入，而不用自己引入。
+> imports-loader 也可以充当垫片的作用，和 webpack.ProvidePlugin 可以做相同的事情:帮助我们在模块中去引入，而不用自己引入。
 
-### Webapck中的环境变量
+### Webapck 中的环境变量
+
 > webpack 命令行 环境配置 的 --env 参数，可以允许你传入任意数量的环境变量。而在 webpack.config.js 中可以访问到这些环境变量。例如，--env.production 或 --env.NODE_ENV=local（NODE_ENV 通常约定用于定义环境类型，查看 这里）。
+
 ```
 // 环境变量 env增加NODE_ENV=LOCAL 同时增加 production属性 默认是true
 webpack --env.NODE_ENV=local --env.production --progress
 
-// 注意写法 
+// 注意写法
 --env.production // 这种写法是增加production属性
 --env production // 而这种写法是直接覆盖env为production
 ```
+
 ```
 const path = require('path');
 
@@ -1342,13 +1348,17 @@ module.exports = env => {
 };
 ```
 
-#### 同时除了env也可以使用直接传递的形式给modules接收
+#### 同时除了 env 也可以使用直接传递的形式给 modules 接收
+
 ```
 // package.json srcript 直接传递test为test
 "compile": "webpack  --test=test  --env.production --config conwebpack.prod.js --mode production",
 ```
-> 使用argv接收 argv会默认存在一些关于webpack打包的信息。
->> 直接传递的参数会在argv中加入。
+
+> 使用 argv 接收 argv 会默认存在一些关于 webpack 打包的信息。
+>
+> > 直接传递的参数会在 argv 中加入。
+
 ```
 module.exports = (env, argv) => {
     console.log(env, 'env')
@@ -1356,3 +1366,90 @@ module.exports = (env, argv) => {
     return merge(common, prodConfig)
 }
 ```
+
+---
+
+### Library 库文件的打包
+
+> 简单的一些 Library 的打包。
+
+1. Library 地方库第一步需要在 package.jon 中注明库的入口文件。
+
+```
+// package.json
+"main":"../dist/main.js"
+```
+
+2. 接下来就是改变 output 的配置。
+
+- [ libraryTarget and library ](https://webpack.docschina.org/configuration/output/#outputlibrarytarget)
+> Library的意思是打包生成一个全局的变量，libraryTarget表示这个变量以什么形式挂载。(比如var全局变量形式，还是挂载在this或者哪些对象属性中)。
+>> LibraryTarget如果配置umd那么他和library关系就不是很大。
+>>> libraryTarget:umd表示支持任何模块引入，但是不支持script脚本。再结合library以全局变量形式暴露，那么就会同时支持script脚本引入了。
+  1.  'var' | 'assign' : 表示打包后的文件暴露出一个全局变量形式进行引入，配合 output.library 进行引入。(常用与 script 脚本)
+
+  2.  this | window | commonjs | global : 通过在对象的属性上暴露，打包后的库文件通过挂载在 this | window ...对象上的属性，属性名为 output.library 配置的名称。
+
+  3.  amd | commonjs2 | umd ... : 通过模块引入，常用的是 umd 配置，表示 library 暴露在任何模块下都可以引入的方式。但是 umd 并不支持 srcipt 脚本引入，可以通过 output.library 结合 libraryTarget:umd，让模块支持任意形式引入。
+
+  ```
+  // 打包生成的模块支持amd esModules Commonjs等形式导入
+  // 同时也支持script标签引入 引入后通过MyLibrary全局变量注入访问导出的module
+    module.exports = {
+    //...
+    output: {
+      library: 'MyLibrary',
+      libraryTarget: 'umd'
+    }
+  };
+  ```
+
+  3. [externals 外部扩展](https://webpack.docschina.org/configuration/externals/)
+  > 防止将某些第三方的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖(external dependencies)。
+
+  比如打包一个第三方库中用到了lodash，但是在打包的时候并不想将lodash进行打包进去。希望使用库的用户在项目中结合lodash一起使用，那么就可以在library打包中使用externals排除lodash避免重复打包。
+
+  > 具有外部依赖(external dependency)的 bundle 可以在各种模块上下文(module context)中使用，例如 CommonJS, AMD, 全局变量和 ES2015 模块。外部 library 可能是以下任何一种形式：
+
+  + root：可以通过一个全局变量访问 library（例如，通过 script 标签）。
+  + commonjs：可以将 library 作为一个 CommonJS 模块访问。
+  + commonjs2：和上面的类似，但导出的是 module.exports.default.
+  + amd：类似于 commonjs，但使用 AMD 模块系统。
+
+  ```
+  // webpack.config.js
+
+  // 数组形式
+
+  // 告诉webpack打包过程中遇到lodash就忽略它不进行打包lodash
+  externals:["lodash"]
+
+  // 对象形式
+
+  externals:{
+    lodash: {
+       // 如果我们的第三库在commonjs环境下运行 (require引入)
+      // 要求lodash必须是名为lodash (const lodash = require('lodash'))
+      commonjs:"lodash",
+
+      // root表示全局script标签引入的时候
+      // 要求lodash定义在全局变量_下
+      root:"_"
+    }
+  }
+  ```
+
+  > 一般来说在没有特殊要求的时候使用数组形式就可以了，就比方上边的形式他的意思就是说任何情况下引入的lodash都要命名为lodash。
+  >> 至于到底怎么要求命名需要结合我们库文件是怎么使用的，比如我们库中如果将lodash定义为了_去使用。那么我们肯定是需要lodash命名为_。
+
+> 当然这只是简单的说库的打包，真正库的打包一些TreeShaking，按需加载等等之类。以后慢慢进行完善。
+ 
+基本三步配置:package.json修改入口文件 --> output配置library/libraryTarget --> 配置externals忽略依赖包 
+
+---
+
+### PWA应用打包配置
+> 使用到在进行总结。。
+### TypeScript应用打包配置
+> 19-Fetch发布后总结。
+
