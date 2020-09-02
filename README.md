@@ -334,7 +334,7 @@ scripts: {
 
 - open
 - port
-- proxy: 如果你有单独的后端开发服务器 API，并且希望在同域名下发送 API 请求 ，那么代理某些 URL 会很有用。
+- proxy: 如果你有单独的后端开发服务器 API，并且希望在同域名下发送 API 请求 ，那么代理某些 URL 会很有用。(接下来会深入讲配置)
 
 ```
  proxy:  {
@@ -1453,3 +1453,125 @@ module.exports = (env, argv) => {
 ### TypeScript应用打包配置
 > 19-Fetch发布后总结。
 
+### WebpackDevServer开发环境下实现请求转发
+> 主要是针对devServer的proxy配置的讲解。devServer依赖http-proxy-middleware底层搭建，可以查看[doc](https://github.com/chimurai/http-proxy-middleware#options)进行详细查阅。
+
+#### Proxy配置项
+
+  1. 字符串形式，表示进行匹配路径转发.
+  ```
+    proxy: {
+      // 表示以react-api的请求路径代理到http://www.dell-lee.com
+      // react-api/test -> http://www.dell-lee.com/react-api/test
+      'react-api':'http://www.dell-lee.com'
+    }
+  ```
+  2. pathRewrite:路径重写。
+  > 比如一个场景，真实header.json接口还没通。后台仅仅提供一份假数据demo.json，这时候就可以使用pathRewrite进行路径重写调试。
+  >> 当header.json通了后注释掉对应pathRewrite就可以调试了。并不需要修改源代码。
+  ```
+    proxy:{
+      '/react-api': {
+        // target代表代理的服务器
+        target:'http://www.dell-lee.com/react-api',
+        pathRewrite:{
+          // 如果是请求的是header.json那么就重写为demo.json
+          'header.json':'demo.json'
+        }
+      }
+    }
+  ```
+  3. secure:默认情况下，devServer将不接受在 HTTPS 上运行且证书无效的后端服务器。配置secure为false可以解决https的代理。
+  ```
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'https://other-server.example.com',
+        secure: false
+      }
+    }
+  }
+  ```
+  4. bypass:进行代理拦截，return false表示跳过转发不走代理。或者控制转发内容。
+  ```
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        bypass: function(req, res, proxyOptions) {
+          if (req.headers.accept.indexOf('html') !== -1) {
+            console.log('Skipping proxy for browser request.');
+            return '/index.html';
+          }
+        }
+      }
+    }
+  }
+  ```
+  5. 数组形式，多路径代理。
+  ```
+  devServer: {
+    proxy: [{
+      // 访问/auth或者/api都会代理到http://localhost:3000
+      context: ['/auth', '/api'],
+      target: 'http://localhost:3000',
+    }]
+  }
+  ```
+  6. index:默认devServer并不会代理根目录的请求(所有),需要支持的话需要将index的配置为空字符串或者false才会生效。
+  ```
+  module.exports = {
+  //...
+  devServer: {
+    index:"",
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        bypass: function(req, res, proxyOptions) {
+          if (req.headers.accept.indexOf('html') !== -1) {
+            console.log('Skipping proxy for browser request.');
+            return '/index.html';
+          }
+        }
+      }
+    }
+  }
+  };
+  ```
+  7. changeOrigin:有一些网站对于origin做了限制，防止外部爬虫进行爬数据限制了origin。配置changeOrigin为true会解决对于origin做的限制。
+  > 没有特殊要求的话，做代理转发的时候始终配置为true。
+  ```
+    module.exports = {
+      //...
+      devServer: {
+        proxy: {
+          '/api': {
+            target: 'http://localhost:3000',
+            changeOrigin: true
+          }
+        }
+      }
+    };
+  ```
+> 当然需要注意的是devServer仅仅对于开发环境有效，线上它并不会生效。
+>> 以及Devserver底层使用的evServer依赖http-proxy-middleware底层搭建，可以查看[doc](https://github.com/chimurai/http-proxy-middleware#options)进行详细更多配置查阅。比如:
+  1. headers:自定义请求头。
+
+  2. timeout...很多配置。
+  ```
+  proxy:{
+      '/react-api': {
+        // target代表代理的服务器
+        target:'http://www.dell-lee.com/react-api',
+        pathRewrite:{
+          // 如果是请求的是header.json那么就重写为demo.json
+          'header.json':'demo.json'
+        },
+        // mock headers
+        headers:{
+            host:'https://wangHaoyu.com',
+            cookie:"mockCookie"
+        }
+      }
+    }
+  ```
