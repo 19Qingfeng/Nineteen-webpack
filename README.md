@@ -1612,3 +1612,6 @@ module.exports = {
 当然historyApiFallback也会使用很多配置,可以参考[Doc](https://github.com/bripkens/connect-history-api-fallback)进行配置。
 
 > 大多数开发场景下我们使用true的配置就可以了，如果有一些额外的配置去查文档进行配置就可以了。
+
+> 当然这是对于开发环境devServer的配置，线上环境的话同样需要后台同事在nginx或者其他服务器上进行重定向的配置。(和historyApiFallback配置一样就可以)
+>> 配置后台服务器对于访问不到的资源路径强行返回跟路径或者指定路径处理。
