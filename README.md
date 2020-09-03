@@ -1575,3 +1575,40 @@ module.exports = (env, argv) => {
       }
     }
   ```
+### WebpackDevServer解决单页面路由问题
+
+关于H5路由和Hash路由的区别以及在Vue和React中对于这两种路由的区别详细参见[路由详解](https://github.com/19Qingfeng/Router-way)。
+
+当使用 HTML5 History API 时, 所有的 404 请求都会响应 index.html 的内容。 将 devServer.historyApiFallback 设为 true开启：
+
+```
+module.exports = {
+  //...
+  devServer: {
+    historyApiFallback: true
+  }
+};
+```
+
+> 这样配置的话对于H5路由的配置就可以生效了。
+>> 它的意思是说对于所有请求路径请求都会返回index.html(跟路径)的资源。当返回index.html的资源的时候，我们打包的js代码会对url进行解析然后根据url处理前端路由。
+
+还可以更加详细的使用rewrites配置进行精准匹配
+```
+module.exports = {
+  //...
+  devServer: {
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/$/, to: '/views/landing.html' },
+        { from: /^\/subpage/, to: '/views/subpage.html' },
+        { from: /./, to: '/views/404.html' }
+      ]
+    }
+  }
+};
+```
+
+当然historyApiFallback也会使用很多配置,可以参考[Doc](https://github.com/bripkens/connect-history-api-fallback)进行配置。
+
+> 大多数开发场景下我们使用true的配置就可以了，如果有一些额外的配置去查文档进行配置就可以了。
