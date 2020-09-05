@@ -228,6 +228,8 @@ Using preloa
 
 > DllPlugin 仅仅针对 dev 环境有效，在 production 环境下是无效的。(生成 mainfest)
 
+**tips:Dllplugin 的 name 配置必须和 output 的 library 一致。**
+
 #### AddAssetHTMLPlugin
 
 ```
@@ -1867,32 +1869,53 @@ devServer:{
 
 5. 提取公共包单独打包。(动态连接库)
 
-> 达到的效果是:针对项目一些 lodash，vue，react 等等公用类库。每次打包其实没有必要重新打包依次，我们达到针对公用类库打包一次然后在 html 中引入。之后在代码打包过程中就会引入之前打包好的第三方类库文件。节省了打包的速度。
+> 达到的效果是:针对项目一些 lodash，vue，react 等等公用类库。每次打包其实没有必要重新打包一次没有变化的类库，我们达到针对公用类库打包一次然后在 html 中引入。之后在代码打包过程中就会引入之前打包好的第三方类库文件。节省了打包的速度。
 
 Tips:<br>
 
 dllPlugin 仅仅在开发环境使用有效，在 production 是无效的。而且其实在 webpack5 中已经实现了对于打包文件的缓存，所以不需要这个东西了说实话。
 
-1. 建立 webpack.dll.js，抽离第三方库打包。
+  1. 建立 webpack.dll.js，entry 抽离第三方库打包。
 
-2. webpack.dll.js 中 library 挂载全局变量形式。
+  2. webpack.dll.js 中 library 挂载全局变量形式。(挂载 js 文件后页面就会存在对应的全局变量)
 
-3. webpack.dll.js 配置 webpack.DllPlugin 针对 output 生成的 js 文件同时生成一份 mainfest.json 映射文件。这份映射文件使用 dllReferencePlugin 去分析。
+  3. webpack.dll.js 配置 webpack.DllPlugin 针对 output 生成的 js 文件同时生成一份 mainfest.json 映射文件。这份映射文件使用 dllReferencePlugin 去分析。
 
-   > dllReferencePlugin 引入对应的 mainfest.json，webpack 在下次打包的时候就会根据映射文件对于已经打包引入的第三方库去生成的 js 中去直接拿。
+    > dllReferencePlugin 引入对应的 mainfest.json，webpack 在下次打包的时候就会根据映射文件对于已经打包引入的第三方库去生成的 js 中去直接拿。
 
-4. webpack.dev.js 配置 webpack.DllReferencePlugin 分析 mainfest.json 分析。
+  4. webpack.dev.js 配置 webpack.DllReferencePlugin 结合全局 dll 暴露的全局变量和 mainfest.json 分析对应模块是否存在。
 
-5. webpack.dev.js 配置 AddAssetHtmlWebpackPlugin 将生成的 js 文件挂载在 html 页面中。
+  5. webpack.dev.js 配置 AddAssetHtmlWebpackPlugin 将生成的 js 文件挂载在 html 页面中。
 
-> 注意 DllPlugin 的 name 和 output 中 library 的 name 保持一致性。
+  > 注意 DllPlugin 的 name 和 output 中 library 的 name 保持一致性。
 
-- 抽离第三方模块单独 config 打包(不要忘记 output 挂载 library) ->
+  - 抽离第三方模块单独 config 打包(不要忘记 output 挂载 library) ->
 
-- 配合使用 webpack.dllplugin 生成 manifest.json ->
+  - 配合使用 webpack.dllplugin 生成 manifest.json ->
 
-- -> AddAssetHTMLWebpackPlugin 将生成的公共 js 文件注入到打包生成的 html 中
+  - -> AddAssetHTMLWebpackPlugin 将生成的公共 js 文件注入到打包生成的 html 中
 
-- -> 配置文件中使用 webpack.DllreferencePlugin 引入 manifest.json 查找对应映射。
+  - -> 配置文件中使用 webpack.DllreferencePlugin 引入 manifest.json 查找对应映射。
+
+6. 控制包的大小
+
+通过TreeShaking，SplitChunks减少包体积的大小。
+
+7. 多进程打包
+
+thread-loader,parall-webpack,happypack利用nodejs多进程进行多个进程打包。
+
+8. 合理使用sourceMap
+
+不同的sourceMap对于包体积和构建速度是不同的，官网有表格详细对比。
+所以合理使用sourceMap选择合适的错误映射方式同时又提高性能也很重要。
+
+9. 结合stats分析打包结果
+
+之间讲到的做打包分析～
+
+10. 开发环境删除无用的插件！
 
 ---
+
+
