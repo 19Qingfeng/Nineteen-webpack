@@ -224,6 +224,22 @@ module.exports = {
 Using preloa
 ```
 
+#### webpack.DllPlugin
+
+> DllPlugin 仅仅针对 dev 环境有效，在 production 环境下是无效的。(生成 mainfest)
+
+#### AddAssetHTMLPlugin
+
+```
+npm i add-asset-html-webpack-plugin -D
+```
+
+#### webpack.DllReferencePlugin
+
+> 这三个文件的配合使用详见 Webpack 性能优化。
+
+---
+
 ### Entry 和 Output 的基础配置
 
 #### entry
@@ -483,7 +499,7 @@ if(module.hot) {
 
 ### resolve 参数
 
-> resolve参数也就是告诉webpack配置方便开发的模块解析规则。
+> resolve 参数也就是告诉 webpack 配置方便开发的模块解析规则。
 
 resolve 参数是告诉 webpack 如何解析模块的规则，也就是使用 resolve 更改 webpack 查找文件位置。
 
@@ -517,6 +533,7 @@ module.exports = {
 - alias
 
 创建别名 import 或 require 某些模块更容易,也就是别名。
+
 ```
 module.exports = {
   //...
@@ -533,7 +550,8 @@ module.exports = {
 import Test from "wanghaoyu/one.vue"
 ```
 
-> alias,extensions,mainFiles这三个其实都存在Webpack的默认配置，当我们不设置的时候。
+> alias,extensions,mainFiles 这三个其实都存在 Webpack 的默认配置，当我们不设置的时候。
+
 ---
 
 ### Babel 处理 ES6 语法
@@ -1843,8 +1861,38 @@ devServer:{
 
 - 合理配置 resolve's mainFiles 配置，查找文件夹内文件规则。
 
-+ 合理使用 resolve's alias。
+* 合理使用 resolve's alias。
 
 > 以上三点针对构建速度。
+
+5. 提取公共包单独打包。(动态连接库)
+
+> 达到的效果是:针对项目一些 lodash，vue，react 等等公用类库。每次打包其实没有必要重新打包依次，我们达到针对公用类库打包一次然后在 html 中引入。之后在代码打包过程中就会引入之前打包好的第三方类库文件。节省了打包的速度。
+
+Tips:<br>
+
+dllPlugin 仅仅在开发环境使用有效，在 production 是无效的。而且其实在 webpack5 中已经实现了对于打包文件的缓存，所以不需要这个东西了说实话。
+
+1. 建立 webpack.dll.js，抽离第三方库打包。
+
+2. webpack.dll.js 中 library 挂载全局变量形式。
+
+3. webpack.dll.js 配置 webpack.DllPlugin 针对 output 生成的 js 文件同时生成一份 mainfest.json 映射文件。这份映射文件使用 dllReferencePlugin 去分析。
+
+   > dllReferencePlugin 引入对应的 mainfest.json，webpack 在下次打包的时候就会根据映射文件对于已经打包引入的第三方库去生成的 js 中去直接拿。
+
+4. webpack.dev.js 配置 webpack.DllReferencePlugin 分析 mainfest.json 分析。
+
+5. webpack.dev.js 配置 AddAssetHtmlWebpackPlugin 将生成的 js 文件挂载在 html 页面中。
+
+> 注意 DllPlugin 的 name 和 output 中 library 的 name 保持一致性。
+
+- 抽离第三方模块单独 config 打包(不要忘记 output 挂载 library) ->
+
+- 配合使用 webpack.dllplugin 生成 manifest.json ->
+
+- -> AddAssetHTMLWebpackPlugin 将生成的公共 js 文件注入到打包生成的 html 中
+
+- -> 配置文件中使用 webpack.DllreferencePlugin 引入 manifest.json 查找对应映射。
 
 ---

@@ -62,18 +62,18 @@
 
 // 异步代码会自动分割
 // import axios from "axios"
-// css代码分割
-import "./index.css"
+// // css代码分割
+// import "./index.css"
 
-function importLoadsh() {
-    return import ( /* webpackChunkName:"lodash" */ "lodash").then(({
-        default: _
-    }) => {
-        let ele = document.createElement("div")
-        ele.innerHTML = 'wang.haoyu'
-        return ele
-    })
-}
+// function importLoadsh() {
+//     return import ( /* webpackChunkName:"lodash" */ "lodash").then(({
+//         default: _
+//     }) => {
+//         let ele = document.createElement("div")
+//         ele.innerHTML = 'wang.haoyu'
+//         return ele
+//     })
+// }
 // importLoadsh().then((ele) => {
 //     document.body.appendChild(ele)
 // })
@@ -88,7 +88,9 @@ function importLoadsh() {
 // import four from "./chunks/4.js";
 // import five from "./chunks/5.js";
 
-// import _ from "lodash"
+import _ from "lodash"
+
+console.log(_.join([1, 2, 3], ","))
 
 // console.log(_)
 
@@ -100,8 +102,8 @@ function importLoadsh() {
 // five()
 // console.log("this is main")
 
-document.addEventListener('click', () => {
-    const ele = importLoadsh().then((ele) => {
-        document.body.appendChild(ele)
-    })
-})
+// document.addEventListener('click', () => {
+//     const ele = importLoadsh().then((ele) => {
+//         document.body.appendChild(ele)
+//     })
+// })

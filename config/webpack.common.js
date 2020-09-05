@@ -5,6 +5,38 @@ const {
 } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
+const fs = require('fs')
+const webpack = require("webpack")
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+
+
+const files = fs.readdirSync(path.resolve(__dirname, "../dll"))
+
+const plugins = [
+    new htmlWebpackPlugin({
+        template: path.resolve(__dirname, "../public/index.html"),
+        title: "19-webpack",
+        filename: "wanghaoyu.html"
+    }),
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin()
+]
+
+
+files.forEach(file => {
+    if (/.*\.dll\.js$/.test(file)) {
+        plugins.push(new AddAssetHtmlPlugin({
+            filepath: path.resolve(__dirname, "../dll", file)
+        }))
+    }
+    if (/.*\.mainfest\.json/.test(file)) {
+        plugins.push(
+            new webpack.DllReferencePlugin({
+                manifest: path.resolve(__dirname, "../dll", file)
+            }),
+        )
+    }
+})
 
 module.exports = {
     entry: {
@@ -76,7 +108,7 @@ module.exports = {
         },
         splitChunks: {
             chunks: 'initial',
-            minSize: 1,
+            minSize: 10240,
             maxSize: 0,
             minChunks: 1,
             maxAsyncRequests: 30,
@@ -100,15 +132,7 @@ module.exports = {
         }
     },
     // 配置plugin
-    plugins: [
-        new htmlWebpackPlugin({
-            template: path.resolve(__dirname, "../public/index.html"),
-            title: "19-webpack",
-            filename: "wanghaoyu.html"
-        }),
-        new CleanWebpackPlugin(),
-        new MiniCssExtractPlugin()
-    ],
+    plugins,
     output: {
         filename: "[name].[contenthash].js",
         // publicPath: "/",
