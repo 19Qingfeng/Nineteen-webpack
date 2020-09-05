@@ -481,6 +481,61 @@ if(module.hot) {
 
 ---
 
+### resolve 参数
+
+> resolve参数也就是告诉webpack配置方便开发的模块解析规则。
+
+resolve 参数是告诉 webpack 如何解析模块的规则，也就是使用 resolve 更改 webpack 查找文件位置。
+
+- extensions
+
+尝试按顺序解决这些扩展名。就比如在 Vuecli 创建的项目其实我们引入 js 文件并不用书写后缀，这就是 extensions 的配置结果。
+
+```
+resolve: {
+    // 从左到右依次顺序去寻找匹配后缀文件
+    extensions: ['.js', '.vue', '.css', '.json']
+}
+```
+
+> 注意如果不进行配置 extensions 的话 webpack 默认是存在默认配置的，一旦配置 extensions 就会覆盖。
+
+- mainFiles
+
+解析目录时要使用的文件名。告诉 Webpack 在引入文件夹时(不显示指明文件名)默认去该文件夹内部哪些文件去查找。(默认 index 配置)
+
+```
+// 优先匹配index,然后index没有再去寻找wanghaoyu 后缀名不写的话仍然按照extensions查找。
+module.exports = {
+  //...
+  resolve: {
+    mainFiles: ['index','wanghaoyu']
+  }
+};
+```
+
+- alias
+
+创建别名 import 或 require 某些模块更容易,也就是别名。
+```
+module.exports = {
+  //...
+  resolve: {
+    alias:{
+      wanghaoyu:path.resolve(__dirname,"../test")
+    }
+  }
+}
+
+// 代码文件中
+// 其实就是在使用import或require的一些别名。
+// 当引入路径看到了设置的alias(wanghaoyu)的时候，他就会执行我配置的路径匹配。
+import Test from "wanghaoyu/one.vue"
+```
+
+> alias,extensions,mainFiles这三个其实都存在Webpack的默认配置，当我们不设置的时候。
+---
+
 ### Babel 处理 ES6 语法
 
 - babel-loader
@@ -1764,7 +1819,32 @@ devServer:{
 }
 ```
 
-###### 当然ESlint-loader还有许多配置
-比如fix是否自动修复，cache缓存检查提高构建速度，force:'pre'强制ESlint优先执行(eslint-loader的位置就可以放在babel-loader之前他都会强制eslint-loader优先处理js代码)等等
+###### 当然 ESlint-loader 还有许多配置
 
-> 大多数场景下会配合git提交前进行处理eslint规范，这个仁者见仁智者见智了。
+比如 fix 是否自动修复，cache 缓存检查提高构建速度，force:'pre'强制 ESlint 优先执行(eslint-loader 的位置就可以放在 babel-loader 之前他都会强制 eslint-loader 优先处理 js 代码)等等
+
+> 大多数场景下会配合 git 提交前进行处理 eslint 规范，这个仁者见仁智者见智了。
+
+### Webpack 性能优化
+
+1. 升级 Node 和 Webpack 进行文件打包处理。
+
+2. 在尽可能少的模块上应用 loader。
+
+比如 babel-loader 的 exclude:/node_modules/，完全没有意义增加了构建的时间,loader 的范围越少意味着无谓的代码处理会更少速度也就更快。
+
+3. plugin 尽可能精简并且确保准确性。
+
+减少不必要的 plugin 节约了打包速度，比如 dev 环境下的 css 压缩以及 splitchunk 等。
+
+4. resolve 合理使用。
+
+- 合理配置 resolve's extensions 配置，配置很多 extensions 的时候 webpack 在打包的时候会多次的调用 nodejs 中的 fs 文件查找会存在打包性能损耗降低构建速度。
+
+- 合理配置 resolve's mainFiles 配置，查找文件夹内文件规则。
+
++ 合理使用 resolve's alias。
+
+> 以上三点针对构建速度。
+
+---
