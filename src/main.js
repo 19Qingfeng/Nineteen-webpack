@@ -88,9 +88,9 @@
 // import four from "./chunks/4.js";
 // import five from "./chunks/5.js";
 
-import _ from "lodash"
+// import _ from "lodash"
 
-console.log(_.join([1, 2, 3], ","))
+// console.log(_.join([1, 2, 3], ","))
 
 // console.log(_)
 
@@ -107,3 +107,5 @@ console.log(_.join([1, 2, 3], ","))
 //         document.body.appendChild(ele)
 //     })
 // })
+
+console.log("wanghaoyu")

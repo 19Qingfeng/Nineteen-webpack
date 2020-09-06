@@ -42,6 +42,9 @@ module.exports = {
     entry: {
         main: path.resolve(__dirname, "../src/main.js"),
     },
+    resolveLoader: {
+        modules: ["node_modules", path.resolve(__dirname, "../mkloader")]
+    },
     // 配置loader
     module: {
         rules: [{
@@ -77,8 +80,17 @@ module.exports = {
                 exclude: /node_modules/,
                 // include:path.resolve(__dirname,'../src')
                 use: [{
-                    loader: "babel-loader"
-                }]
+                        loader: "babel-loader"
+                    },
+                    // 自定义loader处理
+                    {
+                        loader: "replaceLoader",
+                        // 传递参数 loader中使用this.query.name接收
+                        options: {
+                            name: "wanghaoyushijushenne!"
+                        }
+                    }
+                ]
             },
             {
                 test: /\.(scss|css)$/,

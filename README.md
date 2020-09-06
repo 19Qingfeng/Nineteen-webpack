@@ -1525,7 +1525,7 @@ module.exports = (env, argv) => {
   }
 ```
 
-> 一般来说在没有特殊要求的时候使用数组形式就可以了，就比方上边的形式他的意思就是说任何情况下引入的 lodash 都要命名为 lodash。
+> 一般来说在没有特殊要求���时候使用数组形式就可以了，就比方上边的形式他的意思就是说任何情况下引入的 lodash 都要命名为 lodash。
 >
 > > 至于到底怎么要求命名需要结合我们库文件是怎么使用的，比如我们库中如果将 lodash 定义为了*去使用。那么我们肯定是需要 lodash 命名为*。
 
@@ -1897,6 +1897,10 @@ dllPlugin 仅仅在开发环境使用有效，在 production 是无效的。而�
 
   - -> 配置文件中使用 webpack.DllreferencePlugin 引入 manifest.json 查找对应映射。
 
+> 关于抽离第三方公用组件库其实我个人看法在开发环境下使用这钟方式提升开发效率而在线上环境仍然需要一次一次的build。
+
+> 以及在Webpack5中其实已经存在了打包的缓存机制，所以也就没有必要抽离第三方公用插件了。
+
 6. 控制包的大小
 
 通过TreeShaking，SplitChunks减少包体积的大小。
@@ -1917,5 +1921,93 @@ thread-loader,parall-webpack,happypack利用nodejs多进程进行多个进程打
 10. 开发环境删除无用的插件！
 
 ---
+
+
+## 至此，开始深入webpack进行讲解
+
+### 编写一个loader
+
+> [loaderApi。](https://www.webpackjs.com/api/loaders/)
+
+实际上loader非常简单，他就是一个函数。
+
+编写一个loader其实非常简单，就是使用一段js脚本处理传入的源文件然后引入进行处理就OK。
+
+
+需要注意：
+
+1. loader声明不可以使用箭头函数，使用箭头函数webpack无法找到this。
+
+2. loader接收的参数source就是源代码,然后return处理后的source就可以了。
+
+3. 使用loader的使用可以通过option传递参数，loader内通过this.query接收参数。(使用loader-utils可以更加方便分析参数)。
+
++ loader-utils/this.query接收参数
+```
+const loaderUtils = require("loader-utils")
+const loaderUtils = require("loader-utils")
+module.exports = function(source) {
+    // 两种形式都是获得options传递的参数
+    const options = loaderUtils.getOptions(this) // options.name
+    const name = this.query.name;
+    return source.replace("wanghaoyu", name)
+}
+```
+> 当然在新版本中query已经是废弃字段，使用options替代了。但是我包的webpack仍然是使用的query接收。详细可以查看官网api查阅。
+
++ this.callback()替代return。
+
+> 有时我们想再loader处理完成之后不仅仅返回一份源代码，比如返回一些错误返回一些sourceMap映射信息等等就可以不使用return从而使用this.callback。
+
+```
+this.callback(
+  err: Error | null, // 错误信息 没有填null
+  content: string | Buffer, // 返回代码内容
+  sourceMap?: SourceMap, // 返回sourcemap
+  meta?: any // 其他meta信息
+);
+```
+
++ this.async()
+
+告诉 loader-runner 这个 loader 将会异步地回调。返回 this.callback。
+在异步操作调用async返回的callback就会返回。
+
++ Tip:
+
+如果项目中存在很多自定义loader，当我们使用他们的时候会出现丑陋的代码:
+```
+{
+                        loader: path.resolve(__dirname, "../mkloader/replaceLoader.js"),
+                        // 传递参数 loader中使用this.query.name接收
+                        options: {
+                            name: "wanghaoyushijushenne!"
+                        }
+},
+...
+```
+实际上我想像比的loader使用的那样，使用一个名称webpack就会去node_modules中去找。
+
+达到要让webpack去我们的目录去找loader的话，需要进行配置resolveLoaders
+
++ resolveLoaders
+
+  + modules配置，寻找loader时候去查找的路径规则。
+  ```
+  resolveLoader: {
+        modules: ["node_modules", path.resolve(__dirname, "../mkloader")]
+  },
+  ```
+
++ [编写loader存在很多API...](https://www.webpackjs.com/api/loaders/)
+
++ 关于自定义loader的使用场景
+
+> 代码异常捕获，以前需要修改源码去try catch。现在就可以使用loader，去分析function做去try catch。
+
+> 国际化，将变量使用占位符，使用自定义loader进行替换中文or其他语言标题。根据不同环境打包不同的语言。
+
+总是，对于一些源代码的包装我们可以自定义loader进行实现。
+
 
 
