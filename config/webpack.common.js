@@ -8,6 +8,9 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const fs = require('fs')
 const webpack = require("webpack")
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+// custom plugin
+const CopyRightWebpackPlugin = require("../mkPlugin/copyright-webpack-plugin");
+
 
 
 const files = fs.readdirSync(path.resolve(__dirname, "../dll"))
@@ -19,7 +22,10 @@ const plugins = [
         filename: "wanghaoyu.html"
     }),
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin(),
+    new CopyRightWebpackPlugin({
+        name: "wanghaoyu"
+    })
 ]
 
 

@@ -36,5 +36,5 @@ module.exports = function(source) {
     const content = source.replace("wanghaoyu", `test-${name}`)
     setTimeout(() => {
         cb(null, content)
-    }, 5000)
+    }, 0)
 }
