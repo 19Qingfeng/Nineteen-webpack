@@ -1,6 +1,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 19-webpack
 
 重新温习温习 webpack。<br>
@@ -9,13 +34,34 @@
 
 &nbsp;&nbsp; <a href="1">1. Webpack基础内容</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1">1-1. 什么是loader</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1">1-1. 什么是loader-常用loader</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1-1">1-1-1. loader处理图片</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1-2">1-1-2. loader处理样式文件</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1-3">1-1-3. loader处理字体文件</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2">1-2. 常用Plugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-1">1-2-1. HTML-webpack-plugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-2">1-2-1. Clean-webpack-plugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-3">1-2-3. mini-css-extract-plugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-4">1-2-4. optimize-css-assets-webpack-plugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-5">1-2-5. webpack.DllPlugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-6">1-2-6. webpack.DllReferencePlugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='1-2-7'>AddAssetHTMLPlugin</a>
+
+
+
+
+
 
 
 
@@ -138,11 +184,11 @@ import style from "src/index.scss"
 - file-loader 配置和 url-loader 类似，其实 fileloader 也可以处理图片文件，只不过 url-loader 存在 limit 配置可以转成 base64.
 - file-loader 其实可以处理的文件类型有很多做，简单来说他的作用就是将这些匹配文件打包后放在 output 中去。
 
-### Plugin
+### <a name='1-2'>Plugin</a>
 
-> Plugin 本质上就是在 webpack 运行到某个时刻的时候，帮我们做一些事情，类似生命周期函数。
+Plugin 本质上就是在 webpack 运行到某个时刻的时候，帮我们做一些事情，类似生命周期函数。
 
-#### [HTML-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
+#### <a name='1-2-1'>[HTML-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)</a>
 
 > HTML-webpack-plugin 会在打包结束后，自动生成一个 html 文件，并把打包生成的 js 文件插入到 html 文件中。
 
@@ -170,7 +216,7 @@ module.exports = {
 }
 ```
 
-#### [Clean-webpack-plugin](https://www.npmjs.com/package/clean-webpack-plugin)
+#### <a name='1-2-2'>[Clean-webpack-plugin](https://www.npmjs.com/package/clean-webpack-plugin)</a>
 
 > 并非官方推荐，
 > 打包运行前进行之前打包文件的删除。默认可以不传递任何参数。
@@ -181,11 +227,11 @@ module.exports = {
 
   > 之前配置更新了。。用到的还是查文档吧。。更新太快了。
 
-#### [mini-css-extract-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/)
+#### <a name='1-2-3'>[mini-css-extract-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/)</a>
 
-> 默认 webpack 会将 css 文件使用 style-loader 添加到页面 head 标签的 style 中去。(css in js)
->
-> > 使用 mini-css-extract-pluginn 提供的 loader 代替 style-loader 进行拆分。
+默认 webpack 会将 css 文件使用 style-loader 添加到页面 head 标签的 style 中去。(css in js)
+
+**使用 mini-css-extract-pluginn 提供的 loader 代替 style-loader 进行拆分**。
 
 ```
 npm install --save-dev mini-css-extract-plugin
@@ -215,7 +261,7 @@ module.exports = {
 
   4. 关于 MiniCssExtractPlugin 底层其实也是根据 splitChunksPlugin 去拆分的，所以如果需要一些更高级的配置，比如[根据入口文件拆分 css 或者合并多个 css 文件进行一个 css 文件](https://webpack.js.org/plugins/mini-css-extract-plugin/#extracting-all-css-in-a-single-file)。[具体都可以参照官网进行配置 splitchunks 的 cachegroup](https://webpack.js.org/plugins/mini-css-extract-plugin/#root)
 
-#### [optimize-css-assets-webpack-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production)
+#### <a name='1-2-4'>[optimize-css-assets-webpack-plugin](https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production)</a>
 
 > 配合 mini-css-extract-plugin 生成的 css 文件进行压缩。optimization 中 minimizer 的配置项。
 
@@ -243,22 +289,25 @@ module.exports = {
     ],
   },
 };
-Using preloa
 ```
 
-#### webpack.DllPlugin
+#### <a name='1-2-5'>webpack.DllPlugin</a>
 
 > DllPlugin 仅仅针对 dev 环境有效，在 production 环境下是无效的。(生成 mainfest)
 
 **tips:Dllplugin 的 name 配置必须和 output 的 library 一致。**
 
-#### AddAssetHTMLPlugin
+
+
+
+#### <a name='1-2-6'>webpack.DllReferencePlugin</a>
+
+#### <a name='1-2-7'>AddAssetHTMLPlugin</a>
 
 ```
 npm i add-asset-html-webpack-plugin -D
 ```
 
-#### webpack.DllReferencePlugin
 
 > 这三个文件的配合使用详见 Webpack 性能优化。
 
@@ -2133,6 +2182,56 @@ scripts: {
 [19-bundle](https://github.com/19Qingfeng/19-Bundle)
 
 简单小型打包工具。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
