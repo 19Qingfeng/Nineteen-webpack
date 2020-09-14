@@ -2036,7 +2036,111 @@ this.callback(
 
 > 国际化，将变量使用占位符，使用自定义loader进行替换中文or其他语言标题。根据不同环境打包不同的语言。
 
-总是，对于一些源代码的包装我们可以自定义loader进行实现。
+总之，对于一些源代码的包装我们可以自定义loader进行实现。
+
+### 编写Plugin
+
+关于loader，更多的是帮助我们处理模块。比如引用一些非js文件。
+
+Plugin帮助我们在打包的一些时刻生效。
+
+loader的编写非常简单，就是接收源代码和返回处理后的源代码。但是plugin会比较麻烦了，**Plugin的核心机制就是发布订阅者模式，也就是事件驱动模式**,通常plugin会使用class去编写。
+
+
++ 首先，自己编写plugin它是一个class通过new调用。存在construcot和apply实例方法。
+
++ 插件传递的参数，在constructor中使用options接收参数。
+```
+plugin: [
+  ...
+  new CopyRightWebpackPlugin({
+    name:"10-Qingfeng",
+    company:"hylink"
+  })
+]
+
+
+class CopyRightWebpackPlugin {
+    constructor(options) {
+      console.log(options) // 接收参数
+        console.log("插件被使用了")
+    }
+    apply(compile) {}
+}
+```
+
++ apply方法接收一个compile参数，这个参数可以理解为webpack的实例。这个参数存储了各种个样比如webpack配置文件，打包过程等等
+
+注意apply方法的compile具有很多[hooks](https://webpack.js.org/api/compiler-hooks/)钩子。
+
+需要注意的是使用这些钩子函数要区分同步或者异步去调用
+
+同步，比如compile同步hook（beforeCompile在创建新编译之前，在之后立即调用）。
+同步使用tap方法，接收一个插件名称参数和一个callback参数，callback存在compile参数。
+```
+// compile是关于打包编译的信息
+apply(compile) {
+  // 第一个参数为插件名称，第二个为一个callback
+  compile.hooks.compile.tap("CopyRightWebpackPlugin",(compliation) => {
+    // compliation是具有关于本次编译的相关信息
+    // 打包生成的文件存放在assets中
+    // 我们为他增加一个myText我们自己定义的文本
+    compliation.assets["myText.txt"] = {
+      // source 返回的是文件存放内容
+      source: function() {
+        return "19-QingfengWebpack"
+      },
+      size: function () {
+        // size返回文件大小
+        return 18
+      }
+    } 
+  })
+}
+```
+
+异步，比如emit钩子，将生成的文件输出在目录之前的执行。
+异步使用tapAsync方法，接收一个插件名称参数，接收一个callback参数。callback接收两个参数。一个是compliation第二个是cb，显示调用cb表示完成
+
+```
+apply(compile) {
+  compile.hooks.emit.tapAsync("CopyRightWebpackPlugin",(compliation,cb) => {
+    // 显式调用cb 声明异步钩子hook结束
+    ...
+    cb()
+  })
+}
+```
+
++ plugin的执行时刻（也就是webpack打包生命周期），就是通过compile参数的hooks属性去配置的。
+
+
+关于complie部分的hooks属性可以去[官网DOC查询](https://webpack.js.org/api/compiler-hooks/)。
+
+关于compliation中的属性，比如compliaton.assets是生成的文件对象。。可以使用nodejs调试工具去调试debugger：
+
+```
+// package.json中添加
+// 显式声明运行webpack打包 同时使用参数 --inspect开启nodejs调试 --inspect-brk表示在第一行打一个断点
+// 然后就可以在控制台F12中进行调试了，之后配合我们在plugin中定义的debugger，查看对应对象下的各个属性参数
+scripts: {
+  ...
+  debugger:"node --inspect --inspect-brk node_modules/webpack/bin/webpack.js"
+}
+```
+
+> 具体参考mkdir/copyright-webpack-plugin把。
+
+---
+
+### Bundle编写
+
+> 编写一个类似webpack的小型打包工具。
+
+[19-bundle](https://github.com/19Qingfeng/19-Bundle)
+
+简单小型打包工具。
+
 
 
 
