@@ -14,25 +14,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 19-webpack
 
 重新温习温习 webpack。<br>
@@ -63,7 +44,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-6">1-2-6. webpack.DllReferencePlugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='1-2-7'>AddAssetHTMLPlugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='1-2-7'>1-2-7. AddAssetHtmlWebpackPlugin</a>
 
 ---
 
@@ -317,7 +298,7 @@ module.exports = {
 
 #### <a name='1-2-6'>webpack.DllReferencePlugin</a>
 
-#### <a name='1-2-7'>AddAssetHTMLPlugin</a>
+#### <a name='1-2-7'>AddAssetHtmlWebpackPlugin</a>
 
 ```
 npm i add-asset-html-webpack-plugin -D
@@ -2197,6 +2178,12 @@ scripts: {
 [19-bundle](https://github.com/19Qingfeng/19-Bundle)
 
 简单小型打包工具。
+
+
+
+
+
+
 
 
 
