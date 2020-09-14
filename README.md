@@ -26,6 +26,13 @@
 
 
 
+
+
+
+
+
+
+
 # 19-webpack
 
 重新温习温习 webpack。<br>
@@ -57,6 +64,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-6">1-2-6. webpack.DllReferencePlugin</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='1-2-7'>AddAssetHTMLPlugin</a>
+
+---
+
+&nbsp;&nbsp; <a href="2">2. Entry 和 Output 的基础配置</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="2-1">2-1. entry</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="2-2">2-2. output</a>
 
 
 
@@ -313,9 +328,9 @@ npm i add-asset-html-webpack-plugin -D
 
 ---
 
-### Entry 和 Output 的基础配置
+### <a name='2'>Entry 和 Output 的基础配置</a>
 
-#### entry
+#### <a name='2-1'>entry</a>
 
 > 顾名思义，打包入口文件。
 
@@ -333,7 +348,7 @@ entry: {
 }
 ```
 
-#### output
+#### <a name='2-2'>output</a>
 
 > 打包出口文件
 
@@ -350,11 +365,11 @@ output: {
 }
 ```
 
-> chunkFilename: 对于非 enrty 的 js 文件(code splitting 分割出的 chunks)命名规则。
->
-> > Code Splitting 和 webpackChunkName 仅仅写的是 name。
-> >
-> > > 然后在出口统一会经过 chunkFilename 的处理。
+chunkFilename: 对于非 enrty 的 js 文件(code splitting 分割出的 chunks)命名规则。
+
+Code Splitting 和 webpackChunkName 仅仅写的是 name。
+
+然后在出口统一会经过 chunkFilename 的处理。
 
 ### SourceMap
 
@@ -2182,6 +2197,20 @@ scripts: {
 [19-bundle](https://github.com/19Qingfeng/19-Bundle)
 
 简单小型打包工具。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
