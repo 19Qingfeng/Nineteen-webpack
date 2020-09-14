@@ -14,6 +14,14 @@
 
 
 
+
+
+
+
+
+
+
+
 # 19-webpack
 
 重新温习温习 webpack。<br>
@@ -53,6 +61,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp; <a href="2-1">2-1. entry</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp; <a href="2-2">2-2. output</a>
+
+---
+
+&nbsp;&nbsp; <a href="3">3. SourceMap</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='3-1'>3-1. sourceMap 配置建议</a>
 
 
 
@@ -352,7 +366,7 @@ Code Splitting 和 webpackChunkName 仅仅写的是 name。
 
 然后在出口统一会经过 chunkFilename 的处理。
 
-### SourceMap
+### <a name='3'>SourceMap</a>
 
 > sourceMap 作用：它是一个映射关系，如果代码有报错，通过 sourceMap 可以将打包后代码出错的地方映射到源码中出错的地方。
 
@@ -377,7 +391,7 @@ Code Splitting 和 webpackChunkName 仅仅写的是 name。
 
 - eval: 通过 eval 方式进行代码打包，eval 执行形式进行打包映射对应错误。（并不会生成.map，构建速度最快的方式）。
 
-###### sourceMap 配置建议。
+###### <a name='3-1'>sourceMap 配置建议。</a>
 
 - development 建议: 建议使用 cheap-module-eval-source-map 这种方式 提示比较全同时打包速度比较快的。
 - production 建议：绝大多数不需要 sourceMap 配置，如果出现问题可以配置 cheap-module-source-map 线上代码有问题也可以定位错误。
@@ -2178,6 +2192,22 @@ scripts: {
 [19-bundle](https://github.com/19Qingfeng/19-Bundle)
 
 简单小型打包工具。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
