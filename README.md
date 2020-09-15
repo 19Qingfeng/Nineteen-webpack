@@ -24,6 +24,14 @@
 
 
 
+
+
+
+
+
+
+
+
 # 19-webpack
 
 重新温习温习 webpack。<br>
@@ -69,6 +77,16 @@
 &nbsp;&nbsp; <a href="3">3. SourceMap</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp; <a href='3-1'>3-1. sourceMap 配置建议</a>
+
+&nbsp;&nbsp; <a href="4">4. DevServer</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='4-1'>4-1. webpack's Watch Mode</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='4-2'>4-2. webpack-dev-server</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='4-3'>4-3. webpack-dev-middlerware</a>
+
+
 
 
 
@@ -398,11 +416,11 @@ Code Splitting 和 webpackChunkName 仅仅写的是 name。
 - development 建议: 建议使用 cheap-module-eval-source-map 这种方式 提示比较全同时打包速度比较快的。
 - production 建议：绝大多数不需要 sourceMap 配置，如果出现问题可以配置 cheap-module-source-map 线上代码有问题也可以定位错误。
 
-### DevServer
+### <a name='4'>DevServer</a>
 
 > 每次都需要打包后打开 html 进行查看，devserve 帮助我们在本地启动一个 node 环境解决这个问题。
 
-1. webpack's Watch Mode
+1. <a name='4-1'>webpack's Watch Mode</a>
 
 ```
 // package.json:
@@ -411,9 +429,9 @@ scripts: {
 }
 ```
 
-> --watch 这个参数，监控到 webpack 所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些 ajax 的请求调试，而且每次打包过后都需自己手动刷新浏览器。
+ --watch 这个参数，监控到 webpack 所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些 ajax 的请求调试，而且每次打包过后都需自己手动刷新浏览器。
 
-2. webpack-dev-server（推荐）
+2. <a name='4-2'>webpack-dev-server（推荐）</a>
 
 > webapck 内部已经内置了 devServer 的配置，但是注意我们还是需要安装 webpack-dev-server 这个插件。
 
@@ -433,7 +451,7 @@ scripts: {
 
 > contentBase 可以传递一个 String 代表生成静态资源路径和生成静态资源存放路径，也可以传递一个 Array[String], 表示在多个文件中 dev 服务可以去寻找静态资源。
 
-> 关于 contentBase 的确也踩了坑，谨记一句话：告诉 devServer 生成的静态资源比如打包后的 js 文件存放的目录以及同时告诉 devServer 启动服务依赖的静态资源在哪里（比如需要依赖的 html 文件）。但是在配置后 html-webpack-plugin 失去效果。（所以平常项目中如果使用 html-webpack-plugin 就无需配置 contentBase）。
+关于 contentBase 的确也踩了坑，谨记一句话：**告诉 devServer 生成的静态资源比如打包后的 js 文件存放的目录以及同时告诉 devServer 启动服务依赖的静态资源在哪里（比如需要依赖的 html 文件）。**但是在配置后 html-webpack-plugin 失去效果。（所以平常项目中如果使用 html-webpack-plugin 就无需配置 contentBase）。
 
 - open
 - port
@@ -485,7 +503,7 @@ devServer:{
 }
 ```
 
-3. webpack-dev-middlerware
+3. <a name='4-3'>webpack-dev-middlerware</a>
 
    > 扩展一下。自己搭建一个 nodeServer, 使用 webpack-dev-middleware 和 express。
 
@@ -2194,6 +2212,22 @@ scripts: {
 [19-bundle](https://github.com/19Qingfeng/19-Bundle)
 
 简单小型打包工具。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
