@@ -1,101 +1,55 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 19-webpack
 
 重新温习温习 webpack。<br>
 每次 commit 配对对应 Demo，webpack4. X 常用配置以及性能优化。更新中 ing
 
+&nbsp;&nbsp; <a href="#1">1. Webpack 基础内容</a>
 
-&nbsp;&nbsp; <a href="1">1. Webpack基础内容</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-1">1-1. 什么是 loader-常用 loader</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1">1-1. 什么是loader-常用loader</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-1-1">1-1-1. loader 处理图片</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1-1">1-1-1. loader处理图片</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-1-2">1-1-2. loader 处理样式文件</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1-2">1-1-2. loader处理样式文件</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-1-3">1-1-3. loader 处理字体文件</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-1-3">1-1-3. loader处理字体文件</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2">1-2. 常用 Plugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2">1-2. 常用Plugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-1">1-2-1. HTML-webpack-plugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-1">1-2-1. HTML-webpack-plugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-2">1-2-1. Clean-webpack-plugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-2">1-2-1. Clean-webpack-plugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-3">1-2-3. mini-css-extract-plugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-3">1-2-3. mini-css-extract-plugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-4">1-2-4. optimize-css-assets-webpack-plugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-4">1-2-4. optimize-css-assets-webpack-plugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-5">1-2-5. webpack.DllPlugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-5">1-2-5. webpack.DllPlugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-6">1-2-6. webpack.DllReferencePlugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="1-2-6">1-2-6. webpack.DllReferencePlugin</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-7'>1-2-7. AddAssetHtmlWebpackPlugin</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='1-2-7'>1-2-7. AddAssetHtmlWebpackPlugin</a>
+&nbsp;&nbsp; <a href="#2">2. Entry 和 Output 的基础配置</a>
 
----
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="#2-1">2-1. entry</a>
 
-&nbsp;&nbsp; <a href="2">2. Entry 和 Output 的基础配置</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href="#2-2">2-2. output</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href="2-1">2-1. entry</a>
+&nbsp;&nbsp; <a href="#3">3. SourceMap</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href="2-2">2-2. output</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='#3-1'>3-1. sourceMap 配置建议</a>
 
----
+&nbsp;&nbsp; <a href="#4">4. DevServer</a>
 
-&nbsp;&nbsp; <a href="3">3. SourceMap</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='#-1'>4-1. webpack's Watch Mode</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href='3-1'>3-1. sourceMap 配置建议</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='#4-2'>4-2. webpack-dev-server</a>
 
-&nbsp;&nbsp; <a href="4">4. DevServer</a>
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='#4-3'>4-3. webpack-dev-middlerware</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href='4-1'>4-1. webpack's Watch Mode</a>
+&nbsp;&nbsp; <a href="#5">5. Hot Module Replacement</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href='4-2'>4-2. webpack-dev-server</a>
-
-&nbsp;&nbsp;&nbsp;&nbsp; <a href='4-3'>4-3. webpack-dev-middlerware</a>
-
-
-
-
-
-
-
-
-
-
-
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='#5-1'>5-1. HMR原理(module.hot.accept)</a>
 
 
 ## webpack 基础内容讲解
@@ -327,9 +281,6 @@ module.exports = {
 
 **tips:Dllplugin 的 name 配置必须和 output 的 library 一致。**
 
-
-
-
 #### <a name='1-2-6'>webpack.DllReferencePlugin</a>
 
 #### <a name='1-2-7'>AddAssetHtmlWebpackPlugin</a>
@@ -337,7 +288,6 @@ module.exports = {
 ```
 npm i add-asset-html-webpack-plugin -D
 ```
-
 
 > 这三个文件的配合使用详见 Webpack 性能优化。
 
@@ -429,7 +379,7 @@ scripts: {
 }
 ```
 
- --watch 这个参数，监控到 webpack 所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些 ajax 的请求调试，而且每次打包过后都需自己手动刷新浏览器。
+--watch 这个参数，监控到 webpack 所需要打包的代码发生改变。会自动执行打包代码，但是他并不会帮助我们起一个服务器。就意味着打包生成的文件是在本地访问。没有办法去做一些 ajax 的请求调试，而且每次打包过后都需自己手动刷新浏览器。
 
 2. <a name='4-2'>webpack-dev-server（推荐）</a>
 
@@ -516,7 +466,7 @@ npm install express  webpack-dev-middlerware -D
 // 其他配置参考本次commit
 ```
 
-### Hot Module Replacement
+### <a name='5'>Hot Module Replacement</a>
 
 > 关于 HMR 做到的功能我就不在累赘了，热重载现在 cli 项目全都在使用。
 
@@ -544,6 +494,8 @@ plugins:[
 
 ---
 
+#### <a name="5-1">HMR原理</a>
+
 > 稍微说点关于 HRM 的实际实现。
 >
 > > 参考本次（HRM）commit 的代码，我们可以发现对于 js 文件不同模块的的 HRM 需要我们使用 HRM 的 accept 语法去做判断独立更新各自的模块。比如:
@@ -560,11 +512,11 @@ number()
 
 ```
 
-> 这样的写法的话会存在一个潜在的问题。
->
-> > 每次当我点击页面很多次，也就是 count 值变化之后。我再去代码中修改 number 的值因为 HRM 的缘故 count 值就会跟随刷新而重制，这显然不是我所需要的样子。
-> >
-> > > 我需要的是每次在代码中独立更新 number 的值的时候 count 的内容并不会被 HRM 刷新改变。换句话说也就是希望页面每个模块之间独立被 HRM 进行更新。
+这样的写法的话会存在一个潜在的问题。
+
+每次当我点击页面很多次，也就是 count 值变化之后。我再去代码中修改 number 的值因为 HRM 的缘故 count 值就会跟随刷新而重制，这显然不是我所需要的样子。
+
+我需要的是每次在代码中独立更新 number 的值的时候 count 的内容并不会被 HRM 刷新改变。**换句话说也就是希望页面每个模块之间独立被 HRM 进行更新。**
 
 - module.hot.accept(name, cb)
   1. name 表示传入的模块路径，比如 import 的 js 文件模块。
@@ -584,18 +536,25 @@ if(module.hot) {
 // 达到了修改number.js而不影响页面上的count.js的文件和页面状态。
 ```
 
-- 也就是说我们可以通过 module.hot.accept 这个方法覆盖每个模块文件的 HRM 的默认热更新形式从而达到不去影响别的逻辑（交给我们自己处理），比如上边的代码就覆盖了 number.js 改变的时候 HRM 帮我们执行的逻辑。这样就不会对于每次改变都会刷新整个页面逻辑了。
+- 也就是说我们可以**通过 module.hot.accept 这个方法覆盖每个模块文件的 HRM 的默认热更新形式从而达到不去影响别的逻辑（交给我们自己处理**），比如上边的代码就覆盖了 number.js 改变的时候 HRM 帮我们执行的逻辑。这样就不会对于每次改变都会刷新整个页面逻辑了。
+
 - 默认不配置 module.hot.accept 的时候每次改变任意文件它就会帮助我们刷新整个页面。
 
 ###### 关于 module.hot.accept 的实现
 
 - 其实我们在修改 css 文件的时候发现 css 也是独立模块互不影响的，并不像 js 文件这样全局刷新。引入 CSS 文件的改变理论上我们也应该通过 accept 方法进行监听修改逻辑，这是因为 module.hot.accept 这些逻辑在 css-loader 上底层已经帮我们进行了实现，我们使用 css-loader 的时候就不需要额外实现这段代码了。
+
 - 在 Vue 中我们在书写代码的时候也是模块之间互不影响的，同理其实是 vue-loader 底层帮我们实现了 module.hot.accept 的逻辑。
+
 - React 中借助了一些 babel-preset 内置了 module.hot.accept 各个模块之间的实现。
+
 - 通常项目中我们是不需要额外书写 HRM 的 accept 监听逻辑的，但是如果我们在代码中引入了一些比较偏的文件，比如一些数据文件。这些文件的 loader 中并没有实现 accept()的逻辑，这时候就需要我们实现了。
 - 本质上 HRM 都需要实现 accept()方法实现独立更新，但是一些第三方插件已经帮我们实现了。这里的话还是需要给大家说一下，有时候一些文件没有实现那么就需要我们去自己实现了。
-- HRM 提供的方法不仅仅是 accept()还有很多，比如 decline()等等，具体使用的时候可以去文档查询。[module-api](https://webpack.js.org/api/hot-module-replacement/#module-api)
+
+- HRM 提供的方法不仅仅是 accept()还有很多，比如 decline()等等，具体使用的时候可以去文档查看。[module-api](https://webpack.js.org/api/hot-module-replacement/#module-api)
+
 - [HRM 实现原理](https://www.webpackjs.com/concepts/hot-module-replacement/)
+
 - 问题待解决:accept 中如果代码出错，控制台并不报错。why？
 
 ---
@@ -1626,7 +1585,7 @@ module.exports = (env, argv) => {
   }
 ```
 
-> 一般来说在没有特殊要求���时候使用数组形式就可以了，就比方上边的形式他的意思就是说任何情况下引入的 lodash 都要命名为 lodash。
+> 一般来说在没有特殊要求 ��� 时候使用数组形式就可以了，就比方上边的形式他的意思就是说任何情况下引入的 lodash 都要命名为 lodash。
 >
 > > 至于到底怎么要求命名需要结合我们库文件是怎么使用的，比如我们库中如果将 lodash 定义为了*去使用。那么我们肯定是需要 lodash 命名为*。
 
@@ -1976,46 +1935,46 @@ Tips:<br>
 
 dllPlugin 仅仅在开发环境使用有效，在 production 是无效的。而且其实在 webpack5 中已经实现了对于打包文件的缓存，所以不需要这个东西了说实话。
 
-  1. 建立 webpack.dll.js，entry 抽离第三方库打包。
+1. 建立 webpack.dll.js，entry 抽离第三方库打包。
 
-  2. webpack.dll.js 中 library 挂载全局变量形式。(挂载 js 文件后页面就会存在对应的全局变量)
+2. webpack.dll.js 中 library 挂载全局变量形式。(挂载 js 文件后页面就会存在对应的全局变量)
 
-  3. webpack.dll.js 配置 webpack.DllPlugin 针对 output 生成的 js 文件同时生成一份 mainfest.json 映射文件。这份映射文件使用 dllReferencePlugin 去分析。
+3. webpack.dll.js 配置 webpack.DllPlugin 针对 output 生成的 js 文件同时生成一份 mainfest.json 映射文件。这份映射文件使用 dllReferencePlugin 去分析。
 
-    > dllReferencePlugin 引入对应的 mainfest.json，webpack 在下次打包的时候就会根据映射文件对于已经打包引入的第三方库去生成的 js 中去直接拿。
+   > dllReferencePlugin 引入对应的 mainfest.json，webpack 在下次打包的时候就会根据映射文件对于已经打包引入的第三方库去生成的 js 中去直接拿。
 
-  4. webpack.dev.js 配置 webpack.DllReferencePlugin 结合全局 dll 暴露的全局变量和 mainfest.json 分析对应模块是否存在。
+4. webpack.dev.js 配置 webpack.DllReferencePlugin 结合全局 dll 暴露的全局变量和 mainfest.json 分析对应模块是否存在。
 
-  5. webpack.dev.js 配置 AddAssetHtmlWebpackPlugin 将生成的 js 文件挂载在 html 页面中。
+5. webpack.dev.js 配置 AddAssetHtmlWebpackPlugin 将生成的 js 文件挂载在 html 页面中。
 
-  > 注意 DllPlugin 的 name 和 output 中 library 的 name 保持一致性。
+> 注意 DllPlugin 的 name 和 output 中 library 的 name 保持一致性。
 
-  - 抽离第三方模块单独 config 打包(不要忘记 output 挂载 library) ->
+- 抽离第三方模块单独 config 打包(不要忘记 output 挂载 library) ->
 
-  - 配合使用 webpack.dllplugin 生成 manifest.json ->
+- 配合使用 webpack.dllplugin 生成 manifest.json ->
 
-  - -> AddAssetHTMLWebpackPlugin 将生成的公共 js 文件注入到打包生成的 html 中
+- -> AddAssetHTMLWebpackPlugin 将生成的公共 js 文件注入到打包生成的 html 中
 
-  - -> 配置文件中使用 webpack.DllreferencePlugin 引入 manifest.json 查找对应映射。
+- -> 配置文件中使用 webpack.DllreferencePlugin 引入 manifest.json 查找对应映射。
 
-> 关于抽离第三方公用组件库其实我个人看法在开发环境下使用这钟方式提升开发效率而在线上环境仍然需要一次一次的build。
+> 关于抽离第三方公用组件库其实我个人看法在开发环境下使用这钟方式提升开发效率而在线上环境仍然需要一次一次的 build。
 
-> 以及在Webpack5中其实已经存在了打包的缓存机制，所以也就没有必要抽离第三方公用插件了。
+> 以及在 Webpack5 中其实已经存在了打包的缓存机制，所以也就没有必要抽离第三方公用插件了。
 
 6. 控制包的大小
 
-通过TreeShaking，SplitChunks减少包体积的大小。
+通过 TreeShaking，SplitChunks 减少包体积的大小。
 
 7. 多进程打包
 
-thread-loader,parall-webpack,happypack利用nodejs多进程进行多个进程打包。
+thread-loader,parall-webpack,happypack 利用 nodejs 多进程进行多个进程打包。
 
-8. 合理使用sourceMap
+8. 合理使用 sourceMap
 
-不同的sourceMap对于包体积和构建速度是不同的，官网有表格详细对比。
-所以合理使用sourceMap选择合适的错误映射方式同时又提高性能也很重要。
+不同的 sourceMap 对于包体积和构建速度是不同的，官网有表格详细对比。
+所以合理使用 sourceMap 选择合适的错误映射方式同时又提高性能也很重要。
 
-9. 结合stats分析打包结果
+9. 结合 stats 分析打包结果
 
 之间讲到的做打包分析～
 
@@ -2023,27 +1982,26 @@ thread-loader,parall-webpack,happypack利用nodejs多进程进行多个进程打
 
 ---
 
+## 至此，开始深入 webpack 进行讲解
 
-## 至此，开始深入webpack进行讲解
-
-### 编写一个loader
+### 编写一个 loader
 
 > [loaderApi。](https://www.webpackjs.com/api/loaders/)
 
-实际上loader非常简单，他就是一个函数。
+实际上 loader 非常简单，他就是一个函数。
 
-编写一个loader其实非常简单，就是使用一段js脚本处理传入的源文件然后引入进行处理就OK。
-
+编写一个 loader 其实非常简单，就是使用一段 js 脚本处理传入的源文件然后引入进行处理就 OK。
 
 需要注意：
 
-1. loader声明不可以使用箭头函数，使用箭头函数webpack无法找到this。
+1. loader 声明不可以使用箭头函数，使用箭头函数 webpack 无法找到 this。
 
-2. loader接收的参数source就是源代码,然后return处理后的source就可以了。
+2. loader 接收的参数 source 就是源代码,然后 return 处理后的 source 就可以了。
 
-3. 使用loader的使用可以通过option传递参数，loader内通过this.query接收参数。(使用loader-utils可以更加方便分析参数)。
+3. 使用 loader 的使用可以通过 option 传递参数，loader 内通过 this.query 接收参数。(使用 loader-utils 可以更加方便分析参数)。
 
-+ loader-utils/this.query接收参数
+- loader-utils/this.query 接收参数
+
 ```
 const loaderUtils = require("loader-utils")
 const loaderUtils = require("loader-utils")
@@ -2054,11 +2012,12 @@ module.exports = function(source) {
     return source.replace("wanghaoyu", name)
 }
 ```
-> 当然在新版本中query已经是废弃字段，使用options替代了。但是我包的webpack仍然是使用的query接收。详细可以查看官网api查阅。
 
-+ this.callback()替代return。
+> 当然在新版本中 query 已经是废弃字段，使用 options 替代了。但是我包的 webpack 仍然是使用的 query 接收。详细可以查看官网 api 查阅。
 
-> 有时我们想再loader处理完成之后不仅仅返回一份源代码，比如返回一些错误返回一些sourceMap映射信息等等就可以不使用return从而使用this.callback。
+- this.callback()替代 return。
+
+> 有时我们想再 loader 处理完成之后不仅仅返回一份源代码，比如返回一些错误返回一些 sourceMap 映射信息等等就可以不使用 return 从而使用 this.callback。
 
 ```
 this.callback(
@@ -2069,14 +2028,15 @@ this.callback(
 );
 ```
 
-+ this.async()
+- this.async()
 
 告诉 loader-runner 这个 loader 将会异步地回调。返回 this.callback。
-在异步操作调用async返回的callback就会返回。
+在异步操作调用 async 返回的 callback 就会返回。
 
-+ Tip:
+- Tip:
 
-如果项目中存在很多自定义loader，当我们使用他们的时候会出现丑陋的代码:
+如果项目中存在很多自定义 loader，当我们使用他们的时候会出现丑陋的代码:
+
 ```
 {
                         loader: path.resolve(__dirname, "../mkloader/replaceLoader.js"),
@@ -2087,41 +2047,43 @@ this.callback(
 },
 ...
 ```
-实际上我想像比的loader使用的那样，使用一个名称webpack就会去node_modules中去找。
 
-达到要让webpack去我们的目录去找loader的话，需要进行配置resolveLoaders
+实际上我想像比的 loader 使用的那样，使用一个名称 webpack 就会去 node_modules 中去找。
 
-+ resolveLoaders
+达到要让 webpack 去我们的目录去找 loader 的话，需要进行配置 resolveLoaders
 
-  + modules配置，寻找loader时候去查找的路径规则。
+- resolveLoaders
+
+  - modules 配置，寻找 loader 时候去查找的路径规则。
+
   ```
   resolveLoader: {
         modules: ["node_modules", path.resolve(__dirname, "../mkloader")]
   },
   ```
 
-+ [编写loader存在很多API...](https://www.webpackjs.com/api/loaders/)
+- [编写 loader 存在很多 API...](https://www.webpackjs.com/api/loaders/)
 
-+ 关于自定义loader的使用场景
+- 关于自定义 loader 的使用场景
 
-> 代码异常捕获，以前需要修改源码去try catch。现在就可以使用loader，去分析function做去try catch。
+> 代码异常捕获，以前需要修改源码去 try catch。现在就可以使用 loader，去分析 function 做去 try catch。
 
-> 国际化，将变量使用占位符，使用自定义loader进行替换中文or其他语言标题。根据不同环境打包不同的语言。
+> 国际化，将变量使用占位符，使用自定义 loader 进行替换中文 or 其他语言标题。根据不同环境打包不同的语言。
 
-总之，对于一些源代码的包装我们可以自定义loader进行实现。
+总之，对于一些源代码的包装我们可以自定义 loader 进行实现。
 
-### 编写Plugin
+### 编写 Plugin
 
-关于loader，更多的是帮助我们处理模块。比如引用一些非js文件。
+关于 loader，更多的是帮助我们处理模块。比如引用一些非 js 文件。
 
-Plugin帮助我们在打包的一些时刻生效。
+Plugin 帮助我们在打包的一些时刻生效。
 
-loader的编写非常简单，就是接收源代码和返回处理后的源代码。但是plugin会比较麻烦了，**Plugin的核心机制就是发布订阅者模式，也就是事件驱动模式**,通常plugin会使用class去编写。
+loader 的编写非常简单，就是接收源代码和返回处理后的源代码。但是 plugin 会比较麻烦了，**Plugin 的核心机制就是发布订阅者模式，也就是事件驱动模式**,通常 plugin 会使用 class 去编写。
 
+- 首先，自己编写 plugin 它是一个 class 通过 new 调用。存在 construcot 和 apply 实例方法。
 
-+ 首先，自己编写plugin它是一个class通过new调用。存在construcot和apply实例方法。
+- 插件传递的参数，在 constructor 中使用 options 接收参数。
 
-+ 插件传递的参数，在constructor中使用options接收参数。
 ```
 plugin: [
   ...
@@ -2141,14 +2103,15 @@ class CopyRightWebpackPlugin {
 }
 ```
 
-+ apply方法接收一个compile参数，这个参数可以理解为webpack的实例。这个参数存储了各种个样比如webpack配置文件，打包过程等等
+- apply 方法接收一个 compile 参数，这个参数可以理解为 webpack 的实例。这个参数存储了各种个样比如 webpack 配置文件，打包过程等等
 
-注意apply方法的compile具有很多[hooks](https://webpack.js.org/api/compiler-hooks/)钩子。
+注意 apply 方法的 compile 具有很多[hooks](https://webpack.js.org/api/compiler-hooks/)钩子。
 
 需要注意的是使用这些钩子函数要区分同步或者异步去调用
 
-同步，比如compile同步hook（beforeCompile在创建新编译之前，在之后立即调用）。
-同步使用tap方法，接收一个插件名称参数和一个callback参数，callback存在compile参数。
+同步，比如 compile 同步 hook（beforeCompile 在创建新编译之前，在之后立即调用）。
+同步使用 tap 方法，接收一个插件名称参数和一个 callback 参数，callback 存在 compile 参数。
+
 ```
 // compile是关于打包编译的信息
 apply(compile) {
@@ -2166,13 +2129,13 @@ apply(compile) {
         // size返回文件大小
         return 18
       }
-    } 
+    }
   })
 }
 ```
 
-异步，比如emit钩子，将生成的文件输出在目录之前的执行。
-异步使用tapAsync方法，接收一个插件名称参数，接收一个callback参数。callback接收两个参数。一个是compliation第二个是cb，显示调用cb表示完成
+异步，比如 emit 钩子，将生成的文件输出在目录之前的执行。
+异步使用 tapAsync 方法，接收一个插件名称参数，接收一个 callback 参数。callback 接收两个参数。一个是 compliation 第二个是 cb，显示调用 cb 表示完成
 
 ```
 apply(compile) {
@@ -2184,12 +2147,11 @@ apply(compile) {
 }
 ```
 
-+ plugin的执行时刻（也就是webpack打包生命周期），就是通过compile参数的hooks属性去配置的。
+- plugin 的执行时刻（也就是 webpack 打包生命周期），就是通过 compile 参数的 hooks 属性去配置的。
 
+关于 complie 部分的 hooks 属性可以去[官网 DOC 查询](https://webpack.js.org/api/compiler-hooks/)。
 
-关于complie部分的hooks属性可以去[官网DOC查询](https://webpack.js.org/api/compiler-hooks/)。
-
-关于compliation中的属性，比如compliaton.assets是生成的文件对象。。可以使用nodejs调试工具去调试debugger：
+关于 compliation 中的属性，比如 compliaton.assets 是生成的文件对象。。可以使用 nodejs 调试工具去调试 debugger：
 
 ```
 // package.json中添加
@@ -2201,148 +2163,14 @@ scripts: {
 }
 ```
 
-> 具体参考mkdir/copyright-webpack-plugin把。
+> 具体参考 mkdir/copyright-webpack-plugin 把。
 
 ---
 
-### Bundle编写
+### Bundle 编写
 
-> 编写一个类似webpack的小型打包工具。
+> 编写一个类似 webpack 的小型打包工具。
 
 [19-bundle](https://github.com/19Qingfeng/19-Bundle)
 
 简单小型打包工具。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
