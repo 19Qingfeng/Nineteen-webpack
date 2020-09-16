@@ -49,14 +49,13 @@
 
 &nbsp;&nbsp; <a href="#5">5. Hot Module Replacement</a>
 
-&nbsp;&nbsp;&nbsp;&nbsp; <a href='#5-1'>5-1. HMR原理(module.hot.accept)</a>
-
+&nbsp;&nbsp;&nbsp;&nbsp; <a href='#5-1'>5-1. HMR 原理(module.hot.accept)</a>
 
 ## webpack 基础内容讲解
 
 ---
 
-### <a name='1-1'>什么是 loader？</a>
+### <a name='1-1'>1.1 什么是 loader？</a>
 
 > webpack 默认知道如何打包 js 文件，对于一些 css，图片，字体等非 js 文件需要使用使用 loader 去处理让 webpack 识别通过 loader 处理。
 > <br>
@@ -72,13 +71,13 @@ webpack 对于非 js 文件通过 loader 进行识别。<br>
 
 module 中的 rules 进行配置。
 
-#### <a name="1-1-1">使用 loader 打包静态资源(图片)</a>
+#### <a name="1-1-1">1.1.1 使用 loader 打包静态资源(图片)</a>
 
 - 处理图片资源 File-loader 和 Url-loader。
 
 - url-loader 和 file-loader 配置和相似，url-loader 会将配置小于 limit(单位为 btye 1024 -> 1Kb)会转化为 base64。
 
-#### <a name="1-1-2">使用 loader 处理样式文件</a>
+#### <a name="1-1-2">1.1.2 使用 loader 处理样式文件</a>
 
 1. 使用 loader 处理样式文件(1)
 
@@ -162,7 +161,7 @@ import style from "src/index.scss"
 }
 ```
 
-#### <a name="1-1-3">使用 loader 处理字体文件</a>
+#### <a name="1-1-3">1.1.3 使用 loader 处理字体文件</a>
 
 - file-loader 帮助 webapck 识别 ttf, eot, woff 等格式的字体文件处理。
 - file-loader 配置和 url-loader 类似，其实 fileloader 也可以处理图片文件，只不过 url-loader 存在 limit 配置可以转成 base64.
@@ -494,7 +493,7 @@ plugins:[
 
 ---
 
-#### <a name="5-1">HMR原理</a>
+#### <a name="5-1">HMR 原理</a>
 
 > 稍微说点关于 HRM 的实际实现。
 >
