@@ -801,6 +801,10 @@ options: {
 >
 > > 注意：TreeShaking 仅仅对于 ES Module 生效。
 
+需要注意的是，在 webpack 中 TreeShaking 仅仅针对 ESM 生效，对 CJS 方式无效。而在其他一些第三方库中由于实现方式不同所以可以实现对 CJS 的 TreeShaking。
+
+比如 Rollup 中使用@rollup/plugin-commonjs 插件后，就可以识别使用 CJS 的方式了。同时对于 export.xx 这种方式它也会进行 TreeShaking。
+
 - Tree Shaking 只支持 ES Module 方式的引入，因为 ES Module 是静态引入。
 
   > import 底层是静态引入，require commonjs 这种是动态引入。TreeShaking 仅支持静态引入。
