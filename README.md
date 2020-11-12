@@ -1,7 +1,8 @@
 # 19-webpack
 
-重新温习温习 webpack。<br>
-每次 commit 配对对应 Demo，webpack4. X 常用配置以及性能优化。更新中 ing
+复习总结 webpack。<br>
+webpack4. X 常用配置以及性能优化以及webpack5.0。
+> 停了两个多月。。 继续更新完善webpack4.x以及工作中使用到的插件。
 
 &nbsp;&nbsp; <a href="#1">1. Webpack 基础内容</a>
 
