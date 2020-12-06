@@ -315,6 +315,7 @@ Vue-cli3.x中环境变量最终基于这个插件去增加的。
 
 目前实现的办法是通过定义env.config然后在打包过程中通过node的fs模块去读取文件内容进行解析成为一个对象，然后得到环境变量对象添加到definePlugin中实现效果。
 
+
 ###### 遗留问题
 
 1. vue-cli3.x中使用上述方法(fs+defineplugin)定义process.env.xxx，xxx并不在对象内部而是。简单来说:
@@ -330,6 +331,12 @@ console.log(process.env.VUE_HTTP_REQUSET) // 'www.baidu.com'
 ```
 
 2. 一定还有其他更好的方式，等待寻找。
+
+###### 解决遗留问题 
+
+首先，上述方法使用是没有问题的，使用层面是没有任何问题的。只是process.env打印出来的结果不太正确而已。
+
+其次，如果使用层面要更进一步看上去。参照这个[issues:解决环境变量问题](https://github.com/vuejs/vue-cli/issues/6111)
 
 
 ---
