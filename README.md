@@ -34,6 +34,9 @@ webpack工作中遇到的各种问题整合。
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-8'>1-2-8. define-plugin</a>
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-9'>1-2-8. chain-webpack</a>
+
+
 &nbsp;&nbsp; <a href="#2">2. Entry 和 Output 的基础配置</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp; <a href="#2-1">2-1. entry</a>
@@ -295,7 +298,7 @@ npm i add-asset-html-webpack-plugin -D
 
 > 这三个文件的配合使用详见 Webpack 性能优化。
 
-#### <a name='1-2-9'>[define-plugin](https://www.webpackjs.com/plugins/define-plugin/)</a>
+#### <a name='1-2-8'>[define-plugin](https://www.webpackjs.com/plugins/define-plugin/)</a>
 ```
 new webpack.DefinePlugin({
   PRODUCTION: JSON.stringify(true),
@@ -337,6 +340,12 @@ console.log(process.env.VUE_HTTP_REQUSET) // 'www.baidu.com'
 首先，上述方法使用是没有问题的，使用层面是没有任何问题的。只是process.env打印出来的结果不太正确而已。
 
 其次，如果使用层面要更进一步看上去。参照这个[issues:解决环境变量问题](https://github.com/vuejs/vue-cli/issues/6111)
+
+#### <a name='1-2-9'>[chain-webpack](https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans)</a>
+
+> 提供链式调用更加灵活的方式配置webapck，vuecli3基于此进行更高级的webpack配置覆盖以及合并。
+
+> https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans
 
 
 ---
