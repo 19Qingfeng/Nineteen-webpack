@@ -1,7 +1,10 @@
 # 19-webpack
 
-重新温习温习 webpack。<br>
-每次 commit 配对对应 Demo，webpack4. X 常用配置以及性能优化。更新中 ing
+webpack。<br>
+
+webpack4. X 常用配置以及性能优化。更新中 ing
+
+webpack工作中遇到的各种问题整合。
 
 &nbsp;&nbsp; <a href="#1">1. Webpack 基础内容</a>
 
@@ -28,6 +31,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#1-2-6">1-2-6. webpack.DllReferencePlugin</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-7'>1-2-7. AddAssetHtmlWebpackPlugin</a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-8'>1-2-8. define-plugin</a>
 
 &nbsp;&nbsp; <a href="#2">2. Entry 和 Output 的基础配置</a>
 
@@ -289,6 +294,43 @@ npm i add-asset-html-webpack-plugin -D
 ```
 
 > 这三个文件的配合使用详见 Webpack 性能优化。
+
+#### <a name='1-2-9'>[define-plugin](https://www.webpackjs.com/plugins/define-plugin/)</a>
+```
+new webpack.DefinePlugin({
+  PRODUCTION: JSON.stringify(true),
+  VERSION: JSON.stringify("5fa3b9"),
+  BROWSER_SUPPORTS_HTML5: true,
+  TWO: "1+1",
+  "typeof window": JSON.stringify("object")
+})
+console.log("Running App version " + VERSION);
+if(!BROWSER_SUPPORTS_HTML5) require("html5shiv");
+```
+> 注意，因为这个插件直接执行文本替换，给定的值必须包含字符串本身内的实际引号。通常，有两种方式来达到这个效果，使用 '"production"', 或者使用 JSON.stringify('production')。
+
+Vue-cli3.x中环境变量最终基于这个插件去增加的。
+
+工作中有碰到运维为了统一env后缀文件配置，在vue-cli3.x脚手架下项目增加环境变量文件为env.config而为官方的.env.config。
+
+目前实现的办法是通过定义env.config然后在打包过程中通过node的fs模块去读取文件内容进行解析成为一个对象，然后得到环境变量对象添加到definePlugin中实现效果。
+
+###### 遗留问题
+
+1. vue-cli3.x中使用上述方法(fs+defineplugin)定义process.env.xxx，xxx并不在对象内部而是。简单来说:
+```
+
+console.log(process.env)
+
+// 打印 { NODE_ENV:'produciton',BASE_URL:"" }
+
+console.log(process.env.VUE_HTTP_REQUSET) // 'www.baidu.com'
+
+// 很奇怪
+```
+
+2. 一定还有其他更好的方式，等待寻找。
+
 
 ---
 
