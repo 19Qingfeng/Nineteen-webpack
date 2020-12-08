@@ -36,6 +36,9 @@ webpack工作中遇到的各种问题整合。
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-9'>1-2-8. chain-webpack</a>
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-10'>1-2-10. sass-resources-loader</a>
+
+
 
 &nbsp;&nbsp; <a href="#2">2. Entry 和 Output 的基础配置</a>
 
@@ -346,6 +349,34 @@ console.log(process.env.VUE_HTTP_REQUSET) // 'www.baidu.com'
 > 提供链式调用更加灵活的方式配置webapck，vuecli3基于此进行更高级的webpack配置覆盖以及合并。
 
 > https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans
+
+#### <a name='1-2-10'>[sass-resources-loader](https://www.npmjs.com/package/sass-resources-loader)</a>
+
+提供全局注入css变量和mixins等，因为直接在main.js中引入的css全局变量默认是不会生效的。webpack中配合sass-resources-loader使用。
+
+###### Vuecli3中结合sass-resources-loader和chain-webpck使用
+
+> Tip:如果引用报错优先检查文件路径是否存在该文件。
+
+```
+ chainWebpack: config => {
+    const oneOfsMap = config.module.rule('scss').oneOfs.store
+    oneOfsMap.forEach(item => {
+      item
+        .use('sass-resources-loader')
+        .loader('sass-resources-loader')
+        .options({
+          // Provide path to the file with resources
+          resources: path.resolve(__dirname,"./src/assets/css/mixins.scss"),
+
+          // Or array of paths
+          // resources: ['./path/to/vars.scss', './path/to/mixins.scss']
+        })
+        .end()
+    })
+  },
+```
+
 
 
 ---
