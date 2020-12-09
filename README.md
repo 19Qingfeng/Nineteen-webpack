@@ -4,7 +4,7 @@ webpack。<br>
 
 webpack4. X 常用配置以及性能优化。更新中 ing
 
-webpack工作中遇到的各种问题整合。
+webpack 工作中遇到的各种问题整合。
 
 &nbsp;&nbsp; <a href="#1">1. Webpack 基础内容</a>
 
@@ -37,8 +37,6 @@ webpack工作中遇到的各种问题整合。
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-9'>1-2-8. chain-webpack</a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href='#1-2-10'>1-2-10. sass-resources-loader</a>
-
-
 
 &nbsp;&nbsp; <a href="#2">2. Entry 和 Output 的基础配置</a>
 
@@ -302,6 +300,7 @@ npm i add-asset-html-webpack-plugin -D
 > 这三个文件的配合使用详见 Webpack 性能优化。
 
 #### <a name='1-2-8'>[define-plugin](https://www.webpackjs.com/plugins/define-plugin/)</a>
+
 ```
 new webpack.DefinePlugin({
   PRODUCTION: JSON.stringify(true),
@@ -313,18 +312,19 @@ new webpack.DefinePlugin({
 console.log("Running App version " + VERSION);
 if(!BROWSER_SUPPORTS_HTML5) require("html5shiv");
 ```
+
 > 注意，因为这个插件直接执行文本替换，给定的值必须包含字符串本身内的实际引号。通常，有两种方式来达到这个效果，使用 '"production"', 或者使用 JSON.stringify('production')。
 
-Vue-cli3.x中环境变量最终基于这个插件去增加的。
+Vue-cli3.x 中环境变量最终基于这个插件去增加的。
 
-工作中有碰到运维为了统一env后缀文件配置，在vue-cli3.x脚手架下项目增加环境变量文件为env.config而为官方的.env.config。
+工作中有碰到运维为了统一 env 后缀文件配置，在 vue-cli3.x 脚手架下项目增加环境变量文件为 env.config 而为官方的.env.config。
 
-目前实现的办法是通过定义env.config然后在打包过程中通过node的fs模块去读取文件内容进行解析成为一个对象，然后得到环境变量对象添加到definePlugin中实现效果。
-
+目前实现的办法是通过定义 env.config 然后在打包过程中通过 node 的 fs 模块去读取文件内容进行解析成为一个对象，然后得到环境变量对象添加到 definePlugin 中实现效果。
 
 ###### 遗留问题
 
-1. vue-cli3.x中使用上述方法(fs+defineplugin)定义process.env.xxx，xxx并不在对象内部而是。简单来说:
+1. vue-cli3.x 中使用上述方法(fs+defineplugin)定义 process.env.xxx，xxx 并不在对象内部而是。简单来说:
+
 ```
 
 console.log(process.env)
@@ -338,23 +338,23 @@ console.log(process.env.VUE_HTTP_REQUSET) // 'www.baidu.com'
 
 2. 一定还有其他更好的方式，等待寻找。
 
-###### 解决遗留问题 
+###### 解决遗留问题
 
-首先，上述方法使用是没有问题的，使用层面是没有任何问题的。只是process.env打印出来的结果不太正确而已。
+首先，上述方法使用是没有问题的，使用层面是没有任何问题的。只是 process.env 打印出来的结果不太正确而已。
 
 其次，如果使用层面要更进一步看上去。参照这个[issues:解决环境变量问题](https://github.com/vuejs/vue-cli/issues/6111)
 
 #### <a name='1-2-9'>[chain-webpack](https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans)</a>
 
-> 提供链式调用更加灵活的方式配置webapck，vuecli3基于此进行更高级的webpack配置覆盖以及合并。
+> 提供链式调用更加灵活的方式配置 webapck，vuecli3 基于此进行更高级的 webpack 配置覆盖以及合并。
 
 > https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans
 
 #### <a name='1-2-10'>[sass-resources-loader](https://www.npmjs.com/package/sass-resources-loader)</a>
 
-提供全局注入css变量和mixins等，因为直接在main.js中引入的css全局变量默认是不会生效的。webpack中配合sass-resources-loader使用。
+提供全局注入 css 变量和 mixins 等，因为直接在 main.js 中引入的 css 全局变量默认是不会生效的。webpack 中配合 sass-resources-loader 使用。
 
-###### Vuecli3中结合sass-resources-loader和chain-webpck使用
+###### Vuecli3 中结合 sass-resources-loader 和 chain-webpck 使用
 
 > Tip:如果引用报错优先检查文件路径是否存在该文件。
 
@@ -376,8 +376,6 @@ console.log(process.env.VUE_HTTP_REQUSET) // 'www.baidu.com'
     })
   },
 ```
-
-
 
 ---
 
@@ -882,6 +880,12 @@ options: {
 
 ### TreeShaking
 
+简单来总结，TreeShaking 生产环境下剔除引用模块未调用的代码，开发环境无效(只会在代码中注视标注，生产环境才会执行)。
+
+同时需要配置 package.json 中 sideeffects 排除检查一些 css 和@babel/polyfill 之类的文件。
+
+**如果遇到开发环境样式完整或者功能完好，打包后生产环境丢失样式或者内容，谨记检查 package.json/sideEffects 配置。**
+
 > 结论：在看了很多第三方库的源码后，终于发现 TreeShaking 对于很多第三库其实是不支持的。因为他们源码写法的缘故所以无法被 TreeShaking。
 
 > 至于如何解决第三方类库无法被 TreeShaking，需要我们自己动手写一个 loader 处理相应库，这部分代码我在后边补充。
@@ -891,6 +895,8 @@ options: {
 > > 注意：TreeShaking 仅仅对于 ES Module 生效。
 
 需要注意的是，在 webpack 中 TreeShaking 仅仅针对 ESM 生效，对 CJS 方式无效。而在其他一些第三方库中由于实现方式不同所以可以实现对 CJS 的 TreeShaking。
+
+> 其实 TreeShaking 在不同环境下支撑程度不同，rollup 中就有一些插件让 commonjs 对于 Treeshaking 进行了完美的支持(@rollup/plugin-commonjs)。 12.19 补充
 
 比如 Rollup 中使用@rollup/plugin-commonjs 插件后，就可以识别使用 CJS 的方式了。同时对于 export.xx 这种方式它也会进行 TreeShaking。
 
@@ -1477,7 +1483,7 @@ jqueryui()
 >
 > > 这个场景下我们需要 webpack 打包时候识别 jqueryui 的\$，让他知道这是 jqeury 这个库。
 > >
-> > > 达到的效果是相当于见到$就会自动在当前模块内添加import $ from "jquery'。
+> > > 达到的效果是相当于见到$就会自动在当前模块内添加 import $ from "jquery'。
 > > >
 > > > > 这就是垫片 shimming 的作用。
 > > > > **可以理解垫片 shimming 的作用就是为所有模块提供一些全局变量以让他们使用。**
